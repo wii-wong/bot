@@ -1,1 +1,1 @@
-# automation-workshop
+# automation workshop

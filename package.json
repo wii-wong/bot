@@ -1,0 +1,39 @@
+{
+  "name": "automation-workshop",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_OPTIONS=\"--max-old-space-size=12288\" npx tsx src/bot.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dust/world": "https://pkg.pr.new/dustproject/dust/@dust/world@3374e63",
+    "@latticexyz/common": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
+    "@latticexyz/store": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
+    "@latticexyz/world": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
+    "@latticexyz/store-sync": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
+    "@latticexyz/stash": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
+    "@types/node": "^24.0.14",
+    "dotenv": "^17.2.0",
+    "lodash": "^4.17.21",
+    "rxjs": "^7.8.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "viem": "2.30.6",
+    "p-retry": "4.6.2"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "prettier": "^3.5.3",
+    "tsx": "^4.20.3"
+  }
+}
