@@ -3,6 +3,7 @@ import console from "console";
 import { walletClient } from "./chain";
 import { fillBuckets } from "./fillBuckets";
 import { getPlayerInfo } from "./getPlayerInfo";
+import { harvestSeeds } from "./harvest";
 import { plantSeeds } from "./plantSeeds";
 import { syncStash } from "./stash";
 import { wetFarmlands } from "./wetFarmlands";
@@ -21,6 +22,7 @@ async function runBot(stashResult: SyncToStashResult) {
   await fillBuckets(context);
   await wetFarmlands(context);
   await plantSeeds(context);
+  await harvestSeeds(context);
 }
 
 async function main() {

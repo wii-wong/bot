@@ -20,9 +20,6 @@ export async function plantSeeds({
     console.warn("No seeds found in inventory.");
     return;
   }
-  console.log(
-    `Planting ${seeds.reduce((total, seed) => total + seed.amount, 0)} seeds...`
-  );
   const wetFarmlands = await getObjectsInArea(
     lowerFarmCoord,
     upperFarmCoord,
@@ -37,16 +34,16 @@ export async function plantSeeds({
   for (const wetFarmland of wetFarmlands) {
     const seed = seeds.at(0);
     if (!seed) {
-      console.warn("No seeds left to plant.");
+      // console.warn("No seeds left to plant.");
       break;
     }
 
     const plantPos: Vec3 = [wetFarmland[0], wetFarmland[1] + 1, wetFarmland[2]];
     const objectType = await getObjectTypeAt(plantPos);
     if (objectType !== objectsByName.Air.id) {
-      console.warn(
-        `Cannot plant seed at ${plantPos} because it is occupied by object type ${objectType}`
-      );
+      // console.warn(
+      //   `Cannot plant seed at ${plantPos} because it is occupied by object type ${objectType}`
+      // );
       continue;
     }
 
@@ -65,8 +62,6 @@ export async function plantSeeds({
   }
 
   await Promise.all(promises);
-
-  console.log("Seeds planted!");
 }
 
 async function plantSeed(
