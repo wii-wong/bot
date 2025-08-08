@@ -2,11 +2,16 @@ import { SyncToStashResult } from "@latticexyz/store-sync/internal";
 import console from "console";
 import { walletClient } from "./chain";
 import { fillBuckets } from "./fillBuckets";
-import { getPlayerInfo } from "./getPlayerInfo";
+import { getPlayerInfo, PlayerInfo } from "./getPlayerInfo";
 import { harvestSeeds } from "./harvest";
 import { plantSeeds } from "./plantSeeds";
 import { syncStash } from "./stash";
 import { wetFarmlands } from "./wetFarmlands";
+
+export type BotContext = {
+  player: PlayerInfo;
+  stashResult: SyncToStashResult;
+};
 
 async function runBot(stashResult: SyncToStashResult) {
   console.log("🤖 Bot started...");
@@ -14,7 +19,7 @@ async function runBot(stashResult: SyncToStashResult) {
   console.log(
     `Player ${playerInfo.entityId} is at position ${playerInfo.pos} with energy ${playerInfo.getEnergy()}`
   );
-  const context = {
+  const context: BotContext = {
     player: playerInfo,
     stashResult,
   };

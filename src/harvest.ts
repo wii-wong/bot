@@ -6,19 +6,13 @@ import {
 } from "@dust/world/internal";
 import { SyncToStashResult } from "@latticexyz/store-sync/internal";
 import { Hex } from "viem";
+import { BotContext } from "./bot";
 import { publicClient, worldContract } from "./chain";
 import { lowerFarmCoord, upperFarmCoord } from "./constants";
 import { getObjectsInArea } from "./getObjectsInArea";
-import { PlayerInfo } from "./getPlayerInfo";
 import { stash, tables } from "./stash";
 
-export async function harvestSeeds({
-  player,
-  stashResult,
-}: {
-  player: PlayerInfo;
-  stashResult: SyncToStashResult;
-}) {
+export async function harvestSeeds({ player, stashResult }: BotContext) {
   const wheatSeeds = await getObjectsInArea(
     lowerFarmCoord,
     upperFarmCoord,

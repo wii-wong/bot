@@ -1,25 +1,18 @@
 import { objectsByName, packVec3, Vec3 } from "@dust/world/internal";
 import { SyncToStashResult } from "@latticexyz/store-sync/internal";
 import { Hex } from "viem";
+import { BotContext } from "./bot";
 import { worldContract } from "./chain";
-import { PlayerInfo } from "./getPlayerInfo";
+import { waterCoord } from "./constants";
 import { getSlotsWithObject } from "./getSlotsWithObject";
 
-export async function fillBuckets({
-  player,
-  stashResult,
-}: {
-  player: PlayerInfo;
-  stashResult: SyncToStashResult;
-}) {
-  const waterCoord: Vec3 = [888, 62, -1361];
-
+export async function fillBuckets({ player, stashResult }: BotContext) {
   const emptyBuckets = getSlotsWithObject(
     player.entityId,
     objectsByName.Bucket.id
   );
   if (emptyBuckets.length === 0) {
-    console.warn("No water buckets found in inventory.");
+    console.warn("No empty buckets found in inventory.");
     return;
   }
 
