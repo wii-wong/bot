@@ -23,6 +23,9 @@ importers:
       '@latticexyz/store-sync':
         specifier: 2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39
         version: 2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39(react@19.1.0)(typescript@5.8.3)(viem@2.30.6(typescript@5.8.3)(zod@3.23.8))(ws@8.18.2)
+      '@latticexyz/utils':
+        specifier: 2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39
+        version: 2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39
       '@latticexyz/world':
         specifier: 2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39
         version: 2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39(typescript@5.8.3)(viem@2.30.6(typescript@5.8.3)(zod@3.23.8))(zod@3.23.8)

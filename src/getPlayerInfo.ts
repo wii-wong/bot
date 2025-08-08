@@ -12,8 +12,6 @@ export type PlayerInfo = {
   getEnergy: () => bigint;
 };
 
-export const maxPlayerInventorySlots = 36;
-
 export async function getPlayerInfo(address: Hex): Promise<PlayerInfo> {
   const playerEntityId = encodePlayer(address);
 

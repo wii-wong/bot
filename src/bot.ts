@@ -1,27 +1,34 @@
+import { SyncToStashResult } from "@latticexyz/store-sync/internal";
+import console from "console";
 import { walletClient } from "./chain";
 import { fillBuckets } from "./fillBuckets";
 import { getPlayerInfo } from "./getPlayerInfo";
-import { startStashSync } from "./startStashSync";
+import { plantSeeds } from "./plantSeeds";
+import { syncStash } from "./stash";
 import { wetFarmlands } from "./wetFarmlands";
 
-async function runBot() {
+async function runBot(stashResult: SyncToStashResult) {
   console.log("🤖 Bot started...");
   const playerInfo = await getPlayerInfo(walletClient.account.address);
   console.log(
     `Player ${playerInfo.entityId} is at position ${playerInfo.pos} with energy ${playerInfo.getEnergy()}`
   );
+  const context = {
+    player: playerInfo,
+    stashResult,
+  };
 
-  await fillBuckets(playerInfo);
-  await wetFarmlands(playerInfo);
+  await fillBuckets(context);
+  await wetFarmlands(context);
+  await plantSeeds(context);
 }
 
 async function main() {
-  const stashResult = await startStashSync();
-  console.log("Stash sync completed!");
+  const stashResult = await syncStash();
 
   while (true) {
     try {
-      await runBot();
+      await runBot(stashResult);
       console.log("Bot run completed. Restarting...");
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {

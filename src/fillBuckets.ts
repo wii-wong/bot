@@ -1,32 +1,37 @@
 import { objectsByName, packVec3, Vec3 } from "@dust/world/internal";
-import mudConfig from "@dust/world/mud.config";
+import { SyncToStashResult } from "@latticexyz/store-sync/internal";
 import { worldContract } from "./chain";
-import { maxPlayerInventorySlots, PlayerInfo } from "./getPlayerInfo";
-import { stash } from "./stash";
+import { PlayerInfo } from "./getPlayerInfo";
+import { getSlotsWithObject } from "./getSlotsWithObject";
 
-export async function fillBuckets(player: PlayerInfo) {
-  console.log("Filling buckets...");
-
+export async function fillBuckets({
+  player,
+  stashResult,
+}: {
+  player: PlayerInfo;
+  stashResult: SyncToStashResult;
+}) {
   const waterCoord: Vec3 = [888, 62, -1361];
 
-  for (let i = 0; i < maxPlayerInventorySlots; i++) {
-    const inventorySlot = stash.getRecord({
-      table: mudConfig.tables.InventorySlot,
-      key: {
-        owner: player.entityId,
-        slot: i,
-      },
-    });
-    if (inventorySlot?.objectType !== objectsByName.Bucket.id) {
-      continue;
-    }
-    console.log(`Filling bucket in slot ${i}`);
+  const emptyBuckets = getSlotsWithObject(
+    player.entityId,
+    objectsByName.Bucket.id
+  );
+  if (emptyBuckets.length === 0) {
+    console.warn("No water buckets found in inventory.");
+    return;
+  }
+
+  console.log(`Filling ${emptyBuckets.length} buckets...`);
+  for (const { slot } of emptyBuckets) {
+    console.log(`Filling bucket in slot ${slot}`);
     const txHash = await worldContract.write.fillBucket([
       player.entityId,
       packVec3(waterCoord),
-      i,
+      slot,
     ]);
-    console.log(`Bucket filled in slot ${i}, txHash: ${txHash}`);
+    console.log(`Bucket filled in slot ${slot}, txHash: ${txHash}`);
+    await stashResult.waitForTransaction(txHash);
   }
   console.log("All buckets filled!");
 }
