@@ -1,5 +1,6 @@
 import { objectsByName, packVec3, Vec3 } from "@dust/world/internal";
 import { SyncToStashResult } from "@latticexyz/store-sync/internal";
+import { Hex } from "viem";
 import { worldContract } from "./chain";
 import { lowerFarmCoord, upperFarmCoord } from "./constants";
 import { getObjectsInArea } from "./getObjectsInArea";
@@ -31,6 +32,8 @@ export async function plantSeeds({
     console.warn("No wet farmlands found to plant seeds.");
     return;
   }
+
+  const promises = [];
   for (const wetFarmland of wetFarmlands) {
     const seed = seeds.at(0);
     if (!seed) {
@@ -41,24 +44,46 @@ export async function plantSeeds({
     const plantPos: Vec3 = [wetFarmland[0], wetFarmland[1] + 1, wetFarmland[2]];
     const objectType = await getObjectTypeAt(plantPos);
     if (objectType !== objectsByName.Air.id) {
+      console.warn(
+        `Cannot plant seed at ${plantPos} because it is occupied by object type ${objectType}`
+      );
       continue;
     }
-    console.log(`Planting seed at ${plantPos} with slot ${seed.slot}`);
-    const txHash = await worldContract.write.build([
+
+    const promise = plantSeed(
       player.entityId,
-      packVec3(plantPos),
+      plantPos,
       seed.slot,
-      "0x",
-    ]);
-    await stashResult.waitForTransaction(txHash);
-    console.log(
-      `Planted seed at ${plantPos} with slot ${seed.slot}, txHash: ${txHash}`
+      stashResult
     );
+    promises.push(promise);
+
     seed.amount -= 1;
     if (seed.amount === 0) {
       seeds.shift(); // Remove the seed slot if no more seeds left
     }
   }
 
+  await Promise.all(promises);
+
   console.log("Seeds planted!");
+}
+
+async function plantSeed(
+  caller: Hex,
+  plantPos: Vec3,
+  seed: number,
+  stashResult: SyncToStashResult
+) {
+  console.log(`Planting seed at ${plantPos} with slot ${seed}`);
+  const txHash = await worldContract.write.build([
+    caller,
+    packVec3(plantPos),
+    seed,
+    "0x",
+  ]);
+  await stashResult.waitForTransaction(txHash);
+  console.log(
+    `Planted seed at ${plantPos} with slot ${seed}, txHash: ${txHash}`
+  );
 }
