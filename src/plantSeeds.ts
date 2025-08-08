@@ -54,6 +54,10 @@ export async function plantSeeds({ player, stashResult }: BotContext) {
       seeds.shift(); // Remove the seed slot if no more seeds left
     }
   }
+  if (promises.length === 0) {
+    console.warn("No seeds were planted.");
+    return;
+  }
 
   await Promise.all(promises);
 }

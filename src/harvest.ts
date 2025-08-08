@@ -36,6 +36,10 @@ export async function harvestSeeds({ player, stashResult }: BotContext) {
     const promise = harvestSeed(player.entityId, wheatSeed, stashResult);
     promises.push(promise);
   }
+  if (promises.length === 0) {
+    console.warn("No wheat was harvested.");
+    return;
+  }
 
   await Promise.all(promises);
 }
