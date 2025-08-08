@@ -20,12 +20,13 @@ export async function fillBuckets(player: PlayerInfo) {
     if (inventorySlot?.objectType !== objectsByName.Bucket.id) {
       continue;
     }
-    console.log("Filling bucket in slot", i);
-    await worldContract.write.fillBucket(
+    console.log(`Filling bucket in slot ${i}`);
+    const txHash = await worldContract.write.fillBucket([
       player.entityId,
       packVec3(waterCoord),
-      i
-    );
+      i,
+    ]);
+    console.log(`Bucket filled in slot ${i}, txHash: ${txHash}`);
   }
   console.log("All buckets filled!");
 }
