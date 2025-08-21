@@ -1,7 +1,7 @@
 import { objectsByName } from "@dust/world/internal";
 import { fillBucket } from "../actions/fillBucket";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
-import { BotContext } from "../bots/farmingBot";
+import { BotContext } from "../types";
 import { waterCoord } from "../utils/constants";
 
 export async function fillBuckets({ player, stashResult }: BotContext) {

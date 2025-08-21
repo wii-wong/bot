@@ -6,9 +6,9 @@ import { chain, worldAddress, worldBlockNumber } from "./chain";
 
 export const tables = {
   EntityObjectType: mudConfig.tables.EntityObjectType,
-  InventorySlot: mudConfig.tables.InventorySlot,
+  // InventorySlot: mudConfig.tables.InventorySlot,
   Energy: mudConfig.tables.Energy,
-  SeedGrowth: mudConfig.tables.SeedGrowth,
+  // SeedGrowth: mudConfig.tables.SeedGrowth,
 };
 
 export const stash = createStash({ namespaces: { "": { tables } } });

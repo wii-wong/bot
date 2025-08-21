@@ -2,7 +2,7 @@ import { objectsByName, Vec3 } from "@dust/world/internal";
 import { getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { plantSeed } from "../actions/plantSeed";
-import { BotContext } from "../bots/farmingBot";
+import { BotContext } from "../types";
 import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
 import { getObjectsInArea } from "./getObjectsInArea";
 

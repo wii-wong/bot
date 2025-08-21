@@ -1,7 +1,7 @@
 import { objectsByName } from "@dust/world/internal";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { wetFarmland } from "../actions/wetFarmland";
-import { BotContext } from "../bots/farmingBot";
+import { BotContext } from "../types";
 import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
 import { getObjectsInArea } from "./getObjectsInArea";
 

@@ -3,7 +3,7 @@ import {
 } from "@dust/world/internal";
 import { harvestSeed } from "../actions/harvestSeed";
 import { isFullyGrown } from "../actions/isFullyGrown";
-import { BotContext } from "../bots/farmingBot";
+import { BotContext } from "../types";
 import { publicClient } from "../utils/chain";
 import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
 import { getObjectsInArea } from "./getObjectsInArea";

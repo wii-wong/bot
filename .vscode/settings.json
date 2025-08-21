@@ -10,5 +10,8 @@
   "eslint.enable": true,
   "eslint.validate": ["javascript", "typescript"],
   "typescript.preferences.includePackageJsonAutoImports": "on",
-  "typescript.suggest.autoImports": true
+  "typescript.suggest.autoImports": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
