@@ -1,6 +1,6 @@
 import { encodeBlock, getTerrainBlockType, Vec3 } from "@dust/world/internal";
-import { publicClient, worldAddress } from "./chain";
-import { stash, tables } from "./stash";
+import { publicClient, worldAddress } from "../utils/chain";
+import { stash, tables } from "../utils/stash";
 
 export async function getObjectTypeAt(pos: Vec3): Promise<number> {
   const objectTypeRecord = stash.getRecord({

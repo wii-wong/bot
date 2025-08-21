@@ -1,7 +1,7 @@
 import mudConfig from "@dust/world/mud.config";
 import { Hex } from "viem";
-import { maxPlayerInventorySlots } from "./constants";
-import { stash } from "./stash";
+import { maxPlayerInventorySlots } from "../utils/constants";
+import { stash } from "../utils/stash";
 
 export function getSlotsWithObject(
   owner: Hex,

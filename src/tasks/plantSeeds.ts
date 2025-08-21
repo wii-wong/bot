@@ -1,12 +1,10 @@
-import { objectsByName, packVec3, Vec3 } from "@dust/world/internal";
-import { SyncToStashResult } from "@latticexyz/store-sync/internal";
-import { Hex } from "viem";
-import { BotContext } from "./bot";
-import { worldContract } from "./chain";
-import { lowerFarmCoord, upperFarmCoord } from "./constants";
+import { objectsByName, Vec3 } from "@dust/world/internal";
+import { getObjectTypeAt } from "../actions/getObjectTypeAt";
+import { getSlotsWithObject } from "../actions/getSlotsWithObject";
+import { plantSeed } from "../actions/plantSeed";
+import { BotContext } from "../bots/farmingBot";
+import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
 import { getObjectsInArea } from "./getObjectsInArea";
-import { getObjectTypeAt } from "./getObjectTypeAt";
-import { getSlotsWithObject } from "./getSlotsWithObject";
 
 export async function plantSeeds({ player, stashResult }: BotContext) {
   const seeds = getSlotsWithObject(player.entityId, objectsByName.WheatSeed.id);
@@ -62,21 +60,3 @@ export async function plantSeeds({ player, stashResult }: BotContext) {
   await Promise.all(promises);
 }
 
-async function plantSeed(
-  caller: Hex,
-  plantPos: Vec3,
-  seed: number,
-  stashResult: SyncToStashResult
-) {
-  console.log(`Planting seed at ${plantPos} with slot ${seed}`);
-  const txHash = await worldContract.write.build([
-    caller,
-    packVec3(plantPos),
-    seed,
-    "0x",
-  ]);
-  await stashResult.waitForTransaction(txHash);
-  console.log(
-    `Planted seed at ${plantPos} with slot ${seed}, txHash: ${txHash}`
-  );
-}

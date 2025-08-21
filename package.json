@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS=\"--max-old-space-size=12288\" npx tsx src/bot.ts",
+    "dev": "NODE_OPTIONS=\"--max-old-space-size=12288\" npx tsx src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"

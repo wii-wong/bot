@@ -1,5 +1,5 @@
 import { Vec3 } from "@dust/world/internal";
-import { getObjectTypeAt } from "./getObjectTypeAt";
+import { getObjectTypeAt } from "../actions/getObjectTypeAt";
 
 export async function getObjectsInArea(
   [lowerX, lowerY, lowerZ]: Vec3,

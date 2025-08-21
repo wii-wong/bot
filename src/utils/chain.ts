@@ -12,6 +12,7 @@ import {
   getContract,
   Hex,
   http,
+  PublicClient,
   webSocket,
 } from "viem";
 
@@ -28,7 +29,7 @@ const clientOptions = {
 export const worldAddress = worldsJson[chain.id]?.address as Hex;
 export const worldBlockNumber = worldsJson[chain.id]?.blockNumber ?? 0;
 
-export const publicClient = createPublicClient(clientOptions);
+export const publicClient = createPublicClient(clientOptions) as PublicClient;
 
 const privateKey = process.env.PRIVATE_KEY;
 if (!privateKey) {

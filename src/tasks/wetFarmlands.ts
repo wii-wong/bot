@@ -1,11 +1,9 @@
-import { objectsByName, packVec3, Vec3 } from "@dust/world/internal";
-import { SyncToStashResult } from "@latticexyz/store-sync/internal";
-import { Hex } from "viem";
-import { BotContext } from "./bot";
-import { worldContract } from "./chain";
-import { lowerFarmCoord, upperFarmCoord } from "./constants";
+import { objectsByName } from "@dust/world/internal";
+import { getSlotsWithObject } from "../actions/getSlotsWithObject";
+import { wetFarmland } from "../actions/wetFarmland";
+import { BotContext } from "../bots/farmingBot";
+import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
 import { getObjectsInArea } from "./getObjectsInArea";
-import { getSlotsWithObject } from "./getSlotsWithObject";
 
 export async function wetFarmlands({ player, stashResult }: BotContext) {
   const waterBuckets = getSlotsWithObject(
@@ -46,20 +44,3 @@ export async function wetFarmlands({ player, stashResult }: BotContext) {
   console.log("All farmlands wet!");
 }
 
-async function wetFarmland(
-  caller: Hex,
-  farmland: Vec3,
-  waterBucket: number,
-  stashResult: SyncToStashResult
-) {
-  console.log(
-    `Wetting farmland at ${farmland} with bucket in slot ${waterBucket}`
-  );
-  const txHash = await worldContract.write.wetFarmland([
-    caller,
-    packVec3(farmland),
-    waterBucket,
-  ]);
-  await stashResult.waitForTransaction(txHash);
-  console.log(`Farmland at ${farmland} wet, txHash: ${txHash}`);
-}

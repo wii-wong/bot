@@ -3,8 +3,8 @@ import mudConfig from "@dust/world/mud.config";
 import { bigIntMax } from "@latticexyz/common/utils";
 import { getRecord } from "@latticexyz/store/internal";
 import { Hex } from "viem";
-import { publicClient, worldAddress } from "./chain";
-import { stash } from "./stash";
+import { publicClient, worldAddress } from "../utils/chain";
+import { stash } from "../utils/stash";
 
 export type PlayerInfo = {
   entityId: Hex;
