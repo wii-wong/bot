@@ -14,3 +14,5 @@ export const MAX_PLAYER_ENERGY = 817600000000000000n;
 export const MOVE_PLAYER_DELAY = 1000;
 
 export const MAX_ENTITY_INFLUENCE_RADIUS = 10;
+
+export const BED_POSITION: Vec3 = [226, 72, -2679];

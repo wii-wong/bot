@@ -25,6 +25,8 @@ export async function randomSpawn(
       );
       break; // Success, exit the loop
     } catch (error: any) {
+      // sleep 2s 
+      await new Promise(resolve => setTimeout(resolve, 2000));
       attempts++;
       console.log(`Attempt ${attempts}/${maxAttempts} failed: ${error.message || 'Unknown error'}`);
 
