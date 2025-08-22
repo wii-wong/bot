@@ -4,14 +4,14 @@ import { getPlayerInfo } from "./actions/getPlayerInfo";
 import { movePlayer } from "./bots/movePlayer";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
-import { MAX_PLAYER_ENERGY } from "./utils/constants";
+import { getEnergyPercent } from "./utils/common";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
-    // await farmingBot(context);
-    await movePlayer([context.player.pos], context);
+    // await onAirResourceFindingBot(40, "Melon", context);
+    await movePlayer([-345, 27, -1655], context);
+    // await digDownTo([-124, 21, -207], context);
     // await playerSpawn(context);
-    // await resourceFindingBot(10, "Stone", context);
 }
 
 async function main() {
@@ -25,7 +25,7 @@ async function main() {
 
     console.log("Player info: ");
     console.log("position: ", context.player.pos);
-    console.log("energy: ", Number((context.player.getEnergy() * 100n) / MAX_PLAYER_ENERGY), "%");
+    console.log("energy: ", getEnergyPercent(context), "%");
 
     await runBot(context);
 

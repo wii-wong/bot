@@ -10,3 +10,7 @@ export const upperFarmCoord: Vec3 = [892, 63, -1362];
 export const MOCK_TX_AWAIT_TIME = 4000;
 
 export const MAX_PLAYER_ENERGY = 817600000000000000n;
+
+export const MOVE_PLAYER_DELAY = 1000;
+
+export const MAX_ENTITY_INFLUENCE_RADIUS = 10;

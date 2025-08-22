@@ -1,7 +1,7 @@
 import { categories } from "@dust/world/internal";
-import { getObjectType } from "./getObjectTypeAt";
+import { getObjectName } from "./getObjectTypeAt";
 
 export function isBlockPassThrough(objectTypeId: number) {
-    const objectType = getObjectType(objectTypeId);
+    const objectType = getObjectName(objectTypeId);
     return categories.PassThrough.objects.includes(objectType as any);
 }

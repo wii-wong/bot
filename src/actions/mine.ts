@@ -3,16 +3,17 @@ import { BotContext } from "../types";
 import { worldContract } from "../utils/chain";
 import { getEnergyPercent } from "../utils/common";
 
-export async function move(
-  newPosition: Vec3[],
+export async function mineUntilDestroyed(
+  position: Vec3,
   context: BotContext
 ) {
   console.log(
-    `Moving path ${newPosition}, energy: ${getEnergyPercent(context).toString()}`
+    `Mining ${position}, energy: ${getEnergyPercent(context).toString()}`
   );
-  const txHash = await worldContract.write.move([
+  const txHash = await worldContract.write.mineUntilDestroyed([
     context.player.entityId,
-    newPosition.map(p => packVec3(p))
+    packVec3(position),
+    "0x0"
   ]);
   await context.stashResult.waitForTransaction(txHash);
 }

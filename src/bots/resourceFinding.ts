@@ -1,13 +1,12 @@
 import { ObjectName } from "@dust/world/internal";
 import { getObjectTypeId } from "../actions/getObjectTypeAt";
-import { getObjectsInArea } from "../tasks/getObjectsInArea";
+import { getOnAirObjectsInArea } from "../tasks/findObjects";
 import { BotContext } from "../types";
 
 
-export async function resourceFindingBot(radius: number, objectType: ObjectName, context: BotContext) {
+export async function onAirResourceFindingBot(radius: number, objectType: ObjectName, context: BotContext) {
     const objectTypeId = getObjectTypeId(objectType);
 
-    console.log("objectTypeId", objectTypeId);
     const playerPos = context.player.pos;
     const lowerCoord: [number, number, number] = [
         playerPos[0] - radius,
@@ -19,7 +18,7 @@ export async function resourceFindingBot(radius: number, objectType: ObjectName,
         playerPos[1] + radius,
         playerPos[2] + radius,
     ];
-    const positions = await getObjectsInArea(
+    let positions = await getOnAirObjectsInArea(
         lowerCoord,
         upperCoord,
         objectTypeId
@@ -40,10 +39,7 @@ export async function resourceFindingBot(radius: number, objectType: ObjectName,
         return aDistance - bDistance;
     });
 
-    console.log(`Found ${positions.length} positions of ${objectType}`);
-    for (const position of positions) {
-        console.log(`Position: ${position}`);
-    }
+    console.log(`Found ${positions.length} positions of ${objectType}: `, positions);
 
     return positions;
 }

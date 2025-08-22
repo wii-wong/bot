@@ -6,7 +6,7 @@ import { isFullyGrown } from "../actions/isFullyGrown";
 import { BotContext } from "../types";
 import { publicClient } from "../utils/chain";
 import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
-import { getObjectsInArea } from "./getObjectsInArea";
+import { getObjectsInArea } from "./findObjects";
 
 export async function harvestSeeds({ player, stashResult }: BotContext) {
   const wheatSeeds = await getObjectsInArea(

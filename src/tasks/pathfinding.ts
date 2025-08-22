@@ -5,66 +5,14 @@ import { isBlockPassThrough } from "../actions/blockCategory";
 import { getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { BotContext } from "../types";
 
-/*
-世界是基于minecraft的。
-Given a start position and an end position (Vec3), use A* algorithm to plan the path
-Note: The world is a 3D grid, and the path is planned in the grid space
-The world has gravity, 这意味着如果下方没有实体block，玩家会下落(路径规划不允许掉落)
-Direction: Y is the vertical (gravity) direction
-X and Z are the horizontal directions
-Player 占据的坐标是 (x, y, z) 和 (x, y+1, z)
-
-call isBlockPassThrough() to verify if the block is pass through
-
-所有的可移动方向为：
-Direction: [
-      // Cardinal directions (6)
-      "PositiveX",
-      "NegativeX",
-      "PositiveY",
-      "NegativeY",
-      "PositiveZ",
-      "NegativeZ",
-      // Edge directions (12)
-      "PositiveXPositiveY",
-      "PositiveXNegativeY",
-      "NegativeXPositiveY",
-      "NegativeXNegativeY",
-      "PositiveXPositiveZ",
-      "PositiveXNegativeZ",
-      "NegativeXPositiveZ",
-      "NegativeXNegativeZ",
-      "PositiveYPositiveZ",
-      "PositiveYNegativeZ",
-      "NegativeYPositiveZ",
-      "NegativeYNegativeZ",
-      // Corner directions (8)
-      "PositiveXPositiveYPositiveZ",
-      "PositiveXPositiveYNegativeZ",
-      "PositiveXNegativeYPositiveZ",
-      "PositiveXNegativeYNegativeZ",
-      "NegativeXPositiveYPositiveZ",
-      "NegativeXPositiveYNegativeZ",
-      "NegativeXNegativeYPositiveZ",
-      "NegativeXNegativeYNegativeZ",
-    ],
-
-    call getObjectTypeAt() to get the type of the block at some position
-
- */
-
-// Node interface for A* algorithm
-interface Node {
-  position: Vec3;
-  g: number; // Cost from start to current node
-  h: number; // Heuristic (estimated cost from current to target)
-  f: number; // Total cost (g + h)
-  parent: Node | null;
-}
-
 // Helper function to calculate Manhattan distance (heuristic)
 function heuristic(a: Vec3, b: Vec3): number {
   return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+}
+
+// Helper function to calculate horizontal distance (ignoring y-axis)
+function horizontalDistance(a: Vec3, b: Vec3): number {
+  return Math.abs(a[0] - b[0]) + Math.abs(a[2] - b[2]);
 }
 
 // Helper function to check if two positions are equal
@@ -81,16 +29,28 @@ function posToKey(pos: Vec3): string {
 async function isValidPosition(pos: Vec3): Promise<boolean> {
   // Check if the block at pos is passable
   const blockTypeId = await getObjectTypeAt(pos);
+  // If objecttype is 0, it means it has exceeded the world boundary
+  if (blockTypeId === 0) {
+    return false;
+  }
   const isPassable = isBlockPassThrough(blockTypeId);
 
   // Check if the block above pos is passable (player height is 2 blocks)
   const posAbove: Vec3 = [pos[0], pos[1] + 1, pos[2]];
   const blockAboveTypeId = await getObjectTypeAt(posAbove);
+  // If objecttype is 0, it means it has exceeded the world boundary
+  if (blockAboveTypeId === 0) {
+    return false;
+  }
   const isAbovePassable = isBlockPassThrough(blockAboveTypeId);
 
   // Check if the block below has a solid surface (to prevent falling)
   const posBelow: Vec3 = [pos[0], pos[1] - 1, pos[2]];
   const blockBelowTypeId = await getObjectTypeAt(posBelow);
+  // If objecttype is 0, it means it has exceeded the world boundary
+  if (blockBelowTypeId === 0) {
+    return false;
+  }
   const isBelowSolid = !isBlockPassThrough(blockBelowTypeId);
 
   return isPassable && isAbovePassable && isBelowSolid;
@@ -153,7 +113,8 @@ async function getNeighbors(pos: Vec3): Promise<Vec3[]> {
 
 export async function pathFinding(
   target: Vec3,
-  context: BotContext
+  context: BotContext,
+  horizontalDistanceTolerance: number = 5
 ): Promise<Vec3[]> {
   const playerPos = context.player.pos;
 
@@ -162,18 +123,12 @@ export async function pathFinding(
     return [];
   }
 
-  // Check if target position is valid
-  if (!(await isValidPosition(target))) {
-    console.log("Target position is not valid for movement");
-    return [];
-  }
-
-  // Initialize open and closed sets
-  const openSet: Node[] = [];
-  const closedSet = new Set<string>();
+  // Initialize stack for DFS and visited set
+  const stack: Node[] = [];
+  const visited = new Set<string>();
 
   // Set a maximum iteration limit to prevent infinite loops
-  const maxIterations = 1000;
+  const maxIterations = 10000;
   let iterations = 0;
 
   // Create start node
@@ -185,32 +140,31 @@ export async function pathFinding(
     parent: null
   };
 
-  // Add start node to open set
-  openSet.push(startNode);
+  // Add start node to stack
+  stack.push(startNode);
 
-  // Main A* loop
-  while (openSet.length > 0 && iterations < maxIterations) {
+  // Main DFS loop
+  while (stack.length > 0 && iterations < maxIterations) {
     iterations++;
-    // Find node with lowest f score
-    let currentIndex = 0;
-    for (let i = 1; i < openSet.length; i++) {
-      // Make sure both nodes exist before comparing
-      const currentNode = openSet[currentIndex];
-      const nextNode = openSet[i];
-      if (currentNode && nextNode && nextNode.f < currentNode.f) {
-        currentIndex = i;
-      }
-    }
 
-    // Get the current node (guaranteed to exist since openSet.length > 0)
-    const currentNode = openSet[currentIndex];
+    // Get the current node from the top of the stack (DFS)
+    const currentNode = stack.pop();
+    console.log(`current pos: ${currentNode?.position} -> ${target}`);
     if (!currentNode) {
-      // This should never happen, but TypeScript needs this check
       break;
     }
 
-    // If we reached the target, reconstruct and return the path
-    if (posEqual(currentNode.position, target)) {
+    // Skip if we've already visited this node
+    const nodeKey = posToKey(currentNode.position);
+    if (visited.has(nodeKey)) {
+      continue;
+    }
+
+    // Mark as visited
+    visited.add(nodeKey);
+
+    // If we reached the target or are within 5 blocks of it horizontally (ignoring y-axis), reconstruct and return the path
+    if (posEqual(currentNode.position, target) || horizontalDistance(currentNode.position, target) <= horizontalDistanceTolerance) {
       const path: Vec3[] = [];
       let current: Node | null = currentNode;
 
@@ -221,10 +175,6 @@ export async function pathFinding(
 
       return path;
     }
-
-    // Move current node from open to closed set
-    openSet.splice(currentIndex, 1);
-    closedSet.add(posToKey(currentNode.position));
 
     // Get potential neighbor positions
     const cardinalDirections: Vec3[] = [
@@ -264,12 +214,14 @@ export async function pathFinding(
 
     const allDirections = [...cardinalDirections, ...edgeDirections, ...cornerDirections];
 
-    // Process each potential neighbor
+    // Collect valid neighbors
+    const neighbors: { pos: Vec3, distance: number }[] = [];
+
     for (const neighborPos of allDirections) {
       const neighborKey = posToKey(neighborPos);
 
-      // Skip if neighbor is in closed set
-      if (closedSet.has(neighborKey)) {
+      // Skip if already visited
+      if (visited.has(neighborKey)) {
         continue;
       }
 
@@ -278,38 +230,36 @@ export async function pathFinding(
         continue;
       }
 
-      // Calculate g score for this neighbor
-      // Use Euclidean distance for more accurate movement cost
-      const dx = neighborPos[0] - currentNode.position[0];
-      const dy = neighborPos[1] - currentNode.position[1];
-      const dz = neighborPos[2] - currentNode.position[2];
-      const moveCost = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      const tentativeG = currentNode.g + moveCost;
+      // Calculate distance to target for sorting
+      const distanceToTarget = heuristic(neighborPos, target);
+      neighbors.push({
+        pos: neighborPos,
+        distance: distanceToTarget
+      });
+    }
 
-      // Find if neighbor is already in open set
-      const existingNeighborIndex = openSet.findIndex(node =>
-        node && posEqual(node.position, neighborPos)
-      );
+    // Sort neighbors by distance to target (closest first)
+    neighbors.sort((a, b) => a.distance - b.distance);
 
-      if (existingNeighborIndex === -1) {
-        // Neighbor is not in open set, add it
-        const h = heuristic(neighborPos, target);
-        openSet.push({
-          position: neighborPos,
-          g: tentativeG,
-          h,
-          f: tentativeG + h,
-          parent: currentNode
-        });
-      } else {
-        const existingNeighbor = openSet[existingNeighborIndex];
-        if (existingNeighbor && tentativeG < existingNeighbor.g) {
-          // Found a better path to an existing neighbor
-          existingNeighbor.g = tentativeG;
-          existingNeighbor.f = tentativeG + existingNeighbor.h;
-          existingNeighbor.parent = currentNode;
-        }
-      }
+    // Add neighbors to stack in reverse order (so closest is popped first)
+    for (let i = neighbors.length - 1; i >= 0; i--) {
+      const neighbor = neighbors[i];
+      if (!neighbor) continue;
+
+      const neighborPos = neighbor.pos;
+      const distanceToTarget = neighbor.distance;
+
+      // Create neighbor node
+      const neighborNode: Node = {
+        position: neighborPos,
+        g: currentNode.g + 1, // Simple step cost
+        h: distanceToTarget,
+        f: currentNode.g + 1 + distanceToTarget,
+        parent: currentNode
+      };
+
+      // Add to stack
+      stack.push(neighborNode);
     }
   }
 
