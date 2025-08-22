@@ -1,14 +1,11 @@
-import { ObjectName, objects } from "@dust/world/internal";
+import { ObjectName } from "@dust/world/internal";
+import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getObjectsInArea } from "../tasks/getObjectsInArea";
 import { BotContext } from "../types";
 
 
 export async function resourceFindingBot(radius: number, objectType: ObjectName, context: BotContext) {
-    const objectTypeId = (objects.find(e => e.name === objectType))?.id;
-    if (!objectTypeId) {
-        console.log("objectTypeId not found", objectType);
-        return;
-    }
+    const objectTypeId = getObjectTypeId(objectType);
 
     console.log("objectTypeId", objectTypeId);
     const playerPos = context.player.pos;
