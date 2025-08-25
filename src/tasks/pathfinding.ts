@@ -2,8 +2,17 @@
 
 import { Vec3 } from "@dust/world/internal";
 import { isBlockPassThrough } from "../actions/blockCategory";
-import { getObjectTypeAt } from "../actions/getObjectTypeAt";
+import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { BotContext } from "../types";
+
+// Define Node interface for pathfinding
+interface Node {
+  position: Vec3;
+  g: number; // Cost from start to current node
+  h: number; // Heuristic cost from current node to target
+  f: number; // Total cost (g + h)
+  parent: Node | null; // Reference to parent node for path reconstruction
+}
 
 // Helper function to calculate Manhattan distance (heuristic)
 function heuristic(a: Vec3, b: Vec3): number {
@@ -51,6 +60,18 @@ async function isValidPosition(pos: Vec3): Promise<boolean> {
   if (blockBelowTypeId === 0) {
     return false;
   }
+
+  // Check if the block below is Lava (prevent moving on top of Lava)
+  try {
+    const blockBelowName = getObjectName(blockBelowTypeId);
+    if (blockBelowName === "Lava") {
+      return false;
+    }
+  } catch (error) {
+    console.log(`Error checking block below: ${error}`);
+    return false;
+  }
+
   const isBelowSolid = !isBlockPassThrough(blockBelowTypeId);
 
   return isPassable && isAbovePassable && isBelowSolid;
@@ -128,7 +149,7 @@ export async function pathFinding(
   const visited = new Set<string>();
 
   // Set a maximum iteration limit to prevent infinite loops
-  const maxIterations = 10000;
+  const maxIterations = 30000;
   let iterations = 0;
 
   // Create start node

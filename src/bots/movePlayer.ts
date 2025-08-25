@@ -8,7 +8,7 @@ import { MOVE_PLAYER_DELAY } from "../utils/constants";
 export async function movePlayer(target: Vec3, context: BotContext) {
     console.log(`Moving player from ${context.player.pos} to ${target}`);
 
-    const path = await pathFinding(target, context, 10);
+    const path = await pathFinding(target, context, 3);
 
     console.log("path found: length: ", path.length);
 

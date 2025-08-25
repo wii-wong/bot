@@ -1,6 +1,7 @@
 import { packVec3 } from "@dust/world/internal";
 import { BotContext } from "../types";
-import { publicClient, worldContract } from "../utils/chain";
+import { publicClient, walletClient, worldContract } from "../utils/chain";
+import { getPlayerInfo } from "./getPlayerInfo";
 
 export async function randomSpawn(
   context: BotContext
@@ -42,7 +43,8 @@ export async function randomSpawn(
 
   await context.stashResult.waitForTransaction(txHash);
   // await new Promise(resolve => setTimeout(resolve, MOCK_TX_AWAIT_TIME));
+  const playerPos = (await getPlayerInfo(walletClient.account.address)).pos;
   console.log(
-    `Random spawn done`
+    `Random spawn done: pos: ${playerPos}`
   );
 }

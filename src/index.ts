@@ -5,13 +5,15 @@ import { movePlayer } from "./bots/movePlayer";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
+import { BED_POSITION } from "./utils/constants";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
     // await onAirResourceFindingBot(30, "IronOre", context);
-    await movePlayer([228, 73, -2679], context);
-    // await digDownTo([1568, 0, -1799], context);
+    await movePlayer(BED_POSITION, context);
+    // await pickUpAll([538, 158, -1980], context);
     // await mineUntilDestroyed([850, 80, -2694], context);
+    // await sleep(BED_POSITION, context);
     // await playerSpawn(context);
 }
 
