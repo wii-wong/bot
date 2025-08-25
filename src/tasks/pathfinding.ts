@@ -1,9 +1,9 @@
 // import { categories } from "@dust/world/internal";
 
-import { Vec3 } from "@dust/world/internal";
+import { ObjectName, Vec3 } from "@dust/world/internal";
 import { isBlockPassThrough } from "../actions/blockCategory";
 import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
-import { BotContext } from "../types";
+import { BotContext, MovePlayerOptions, ToleranceType } from "../types";
 
 // Define Node interface for pathfinding
 interface Node {
@@ -21,7 +21,12 @@ function heuristic(a: Vec3, b: Vec3): number {
 
 // Helper function to calculate horizontal distance (ignoring y-axis)
 function horizontalDistance(a: Vec3, b: Vec3): number {
-  return Math.abs(a[0] - b[0]) + Math.abs(a[2] - b[2]);
+  return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[2] - b[2]));
+}
+
+// Helper function to calculate cube distance (Manhattan distance in 3D)
+function cubeDistance(a: Vec3, b: Vec3): number {
+  return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1]), Math.abs(a[2] - b[2]));
 }
 
 // Helper function to check if two positions are equal
@@ -35,7 +40,7 @@ function posToKey(pos: Vec3): string {
 }
 
 // Helper function to check if a position is valid for movement
-async function isValidPosition(pos: Vec3): Promise<boolean> {
+async function isValidPosition(pos: Vec3, avoidBlocks: ObjectName[]): Promise<boolean> {
   // Check if the block at pos is passable
   const blockTypeId = await getObjectTypeAt(pos);
   // If objecttype is 0, it means it has exceeded the world boundary
@@ -64,7 +69,7 @@ async function isValidPosition(pos: Vec3): Promise<boolean> {
   // Check if the block below is Lava (prevent moving on top of Lava)
   try {
     const blockBelowName = getObjectName(blockBelowTypeId);
-    if (blockBelowName === "Lava") {
+    if (avoidBlocks.includes(blockBelowName)) {
       return false;
     }
   } catch (error) {
@@ -77,67 +82,12 @@ async function isValidPosition(pos: Vec3): Promise<boolean> {
   return isPassable && isAbovePassable && isBelowSolid;
 }
 
-// Helper function to get valid neighbors of a position
-async function getNeighbors(pos: Vec3): Promise<Vec3[]> {
-  const neighbors: Vec3[] = [];
-
-  // Cardinal directions (6)
-  const cardinalDirections: Vec3[] = [
-    [pos[0] + 1, pos[1], pos[2]], // PositiveX
-    [pos[0] - 1, pos[1], pos[2]], // NegativeX
-    [pos[0], pos[1] + 1, pos[2]], // PositiveY
-    [pos[0], pos[1] - 1, pos[2]], // NegativeY
-    [pos[0], pos[1], pos[2] + 1], // PositiveZ
-    [pos[0], pos[1], pos[2] - 1], // NegativeZ
-  ];
-
-  // Edge directions (12)
-  const edgeDirections: Vec3[] = [
-    [pos[0] + 1, pos[1] + 1, pos[2]], // PositiveXPositiveY
-    [pos[0] + 1, pos[1] - 1, pos[2]], // PositiveXNegativeY
-    [pos[0] - 1, pos[1] + 1, pos[2]], // NegativeXPositiveY
-    [pos[0] - 1, pos[1] - 1, pos[2]], // NegativeXNegativeY
-    [pos[0] + 1, pos[1], pos[2] + 1], // PositiveXPositiveZ
-    [pos[0] + 1, pos[1], pos[2] - 1], // PositiveXNegativeZ
-    [pos[0] - 1, pos[1], pos[2] + 1], // NegativeXPositiveZ
-    [pos[0] - 1, pos[1], pos[2] - 1], // NegativeXNegativeZ
-    [pos[0], pos[1] + 1, pos[2] + 1], // PositiveYPositiveZ
-    [pos[0], pos[1] + 1, pos[2] - 1], // PositiveYNegativeZ
-    [pos[0], pos[1] - 1, pos[2] + 1], // NegativeYPositiveZ
-    [pos[0], pos[1] - 1, pos[2] - 1], // NegativeYNegativeZ
-  ];
-
-  // Corner directions (8)
-  const cornerDirections: Vec3[] = [
-    [pos[0] + 1, pos[1] + 1, pos[2] + 1], // PositiveXPositiveYPositiveZ
-    [pos[0] + 1, pos[1] + 1, pos[2] - 1], // PositiveXPositiveYNegativeZ
-    [pos[0] + 1, pos[1] - 1, pos[2] + 1], // PositiveXNegativeYPositiveZ
-    [pos[0] + 1, pos[1] - 1, pos[2] - 1], // PositiveXNegativeYNegativeZ
-    [pos[0] - 1, pos[1] + 1, pos[2] + 1], // NegativeXPositiveYPositiveZ
-    [pos[0] - 1, pos[1] + 1, pos[2] - 1], // NegativeXPositiveYNegativeZ
-    [pos[0] - 1, pos[1] - 1, pos[2] + 1], // NegativeXNegativeYPositiveZ
-    [pos[0] - 1, pos[1] - 1, pos[2] - 1], // NegativeXNegativeYNegativeZ
-  ];
-
-  // Combine all directions
-  const allDirections = [...cardinalDirections, ...edgeDirections, ...cornerDirections];
-
-  // Check each direction for validity
-  for (const neighbor of allDirections) {
-    if (await isValidPosition(neighbor)) {
-      neighbors.push(neighbor);
-    }
-  }
-
-  return neighbors;
-}
-
 export async function pathFinding(
   target: Vec3,
   context: BotContext,
-  horizontalDistanceTolerance: number = 5
+  options: MovePlayerOptions
 ): Promise<Vec3[]> {
-  const playerPos = context.player.pos;
+  const playerPos = await context.player.getPos();
 
   // If start and target are the same, return empty path
   if (posEqual(playerPos, target)) {
@@ -184,8 +134,10 @@ export async function pathFinding(
     // Mark as visited
     visited.add(nodeKey);
 
-    // If we reached the target or are within 5 blocks of it horizontally (ignoring y-axis), reconstruct and return the path
-    if (posEqual(currentNode.position, target) || horizontalDistance(currentNode.position, target) <= horizontalDistanceTolerance) {
+    // If we reached the target or are within tolerance distance, reconstruct and return the path
+    if (posEqual(currentNode.position, target) ||
+      (options.toleranceType === ToleranceType.Horizontal && horizontalDistance(currentNode.position, target) <= options.tolerance) ||
+      (options.toleranceType === ToleranceType.Cube && cubeDistance(currentNode.position, target) <= options.tolerance)) {
       const path: Vec3[] = [];
       let current: Node | null = currentNode;
 
@@ -247,7 +199,7 @@ export async function pathFinding(
       }
 
       // Check if the neighbor position is valid for movement
-      if (!(await isValidPosition(neighborPos))) {
+      if (!(await isValidPosition(neighborPos, options.avoidBlocks))) {
         continue;
       }
 

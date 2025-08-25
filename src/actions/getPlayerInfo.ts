@@ -3,27 +3,25 @@ import mudConfig from "@dust/world/mud.config";
 import { bigIntMax } from "@latticexyz/common/utils";
 import { getRecord } from "@latticexyz/store/internal";
 import { Hex } from "viem";
+import { PlayerInfo } from "../types";
 import { publicClient, worldAddress } from "../utils/chain";
 import { stash } from "../utils/stash";
-
-export type PlayerInfo = {
-  entityId: Hex;
-  pos: Vec3;
-  getEnergy: () => bigint;
-};
 
 export async function getPlayerInfo(address: Hex): Promise<PlayerInfo> {
   const playerEntityId = encodePlayer(address);
 
   // Fetching a table record from the RPC
-  const posRecord = await getRecord(publicClient, {
-    address: worldAddress,
-    table: mudConfig.tables.EntityPosition,
-    key: {
-      entityId: playerEntityId,
-    },
-  });
-  const playerPos: Vec3 = [posRecord.x, posRecord.y, posRecord.z];
+  const getPos = async () => {
+    const posRecord = await getRecord(publicClient, {
+      address: worldAddress,
+      table: mudConfig.tables.EntityPosition,
+      key: {
+        entityId: playerEntityId,
+      },
+    });
+    const playerPos: Vec3 = [posRecord.x, posRecord.y, posRecord.z];
+    return playerPos;
+  };
 
   const getEnergy = () => {
     // Fetching a table record from stash
@@ -52,7 +50,7 @@ export async function getPlayerInfo(address: Hex): Promise<PlayerInfo> {
 
   return {
     entityId: playerEntityId,
-    pos: playerPos,
+    getPos,
     getEnergy,
   };
 }

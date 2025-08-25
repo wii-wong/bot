@@ -2,13 +2,14 @@ import { Vec3 } from "@dust/world/internal";
 
 import { move } from "../actions/move";
 import { pathFinding } from "../tasks/pathfinding";
-import { BotContext } from "../types";
+import { BotContext, MovePlayerOptions } from "../types";
 import { MOVE_PLAYER_DELAY } from "../utils/constants";
 
-export async function movePlayer(target: Vec3, context: BotContext) {
-    console.log(`Moving player from ${context.player.pos} to ${target}`);
+export async function movePlayer(target: Vec3, context: BotContext, options: MovePlayerOptions) {
+    const playerPos = await context.player.getPos();
+    console.log(`Moving player from ${playerPos} to ${target}`);
 
-    const path = await pathFinding(target, context, 3);
+    const path = await pathFinding(target, context, options);
 
     console.log("path found: length: ", path.length);
 

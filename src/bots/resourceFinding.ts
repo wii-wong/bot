@@ -7,7 +7,7 @@ import { BotContext } from "../types";
 export async function onAirResourceFindingBot(radius: number, objectType: ObjectName, context: BotContext) {
     const objectTypeId = getObjectTypeId(objectType);
 
-    const playerPos = context.player.pos;
+    const playerPos = await context.player.getPos();
     const lowerCoord: [number, number, number] = [
         playerPos[0] - radius,
         playerPos[1] - radius,

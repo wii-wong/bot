@@ -3,7 +3,7 @@ import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { wetFarmland } from "../actions/wetFarmland";
 import { BotContext } from "../types";
 import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
-import { getObjectsInArea } from "./findObjects";
+import { getOnAirObjectsInArea } from "./findObjects";
 
 export async function wetFarmlands({ player, stashResult }: BotContext) {
   const waterBuckets = getSlotsWithObject(
@@ -11,7 +11,7 @@ export async function wetFarmlands({ player, stashResult }: BotContext) {
     objectsByName.WaterBucket.id
   );
 
-  const farmlands = await getObjectsInArea(
+  const farmlands = await getOnAirObjectsInArea(
     lowerFarmCoord,
     upperFarmCoord,
     objectsByName.Farmland.id

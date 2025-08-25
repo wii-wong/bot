@@ -6,10 +6,10 @@ import { isFullyGrown } from "../actions/isFullyGrown";
 import { BotContext } from "../types";
 import { publicClient } from "../utils/chain";
 import { lowerFarmCoord, upperFarmCoord } from "../utils/constants";
-import { getObjectsInArea } from "./findObjects";
+import { getOnAirObjectsInArea } from "./findObjects";
 
 export async function harvestSeeds({ player, stashResult }: BotContext) {
-  const wheatSeeds = await getObjectsInArea(
+  const wheatSeeds = await getOnAirObjectsInArea(
     lowerFarmCoord,
     upperFarmCoord,
     objectsByName.WheatSeed.id

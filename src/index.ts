@@ -1,20 +1,23 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
-import { movePlayer } from "./bots/movePlayer";
+import { randomSpawn } from "./actions/spawnPlayer";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
-import { BED_POSITION } from "./utils/constants";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
     // await onAirResourceFindingBot(30, "IronOre", context);
-    await movePlayer(BED_POSITION, context);
+    // await movePlayer(BED_POSITION, context, {
+    //     toleranceType: ToleranceType.Cube,
+    //     tolerance: 4,
+    //     avoidBlocks: ["Lava"],
+    // });
     // await pickUpAll([538, 158, -1980], context);
     // await mineUntilDestroyed([850, 80, -2694], context);
     // await sleep(BED_POSITION, context);
-    // await playerSpawn(context);
+    await randomSpawn(context);
 }
 
 async function main() {
@@ -27,7 +30,7 @@ async function main() {
     };
 
     console.log("Player info: ");
-    console.log("position: ", context.player.pos);
+    console.log("position: ", await context.player.getPos());
     console.log("energy: ", getEnergyPercent(context), "%");
 
     await runBot(context);

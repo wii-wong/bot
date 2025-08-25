@@ -12,7 +12,7 @@ async function singleRun(context: BotContext) {
   console.log("🤖 Bot started...");
   const playerInfo = await getPlayerInfo(walletClient.account.address);
   console.log(
-    `Player ${playerInfo.entityId} is at position ${playerInfo.pos} with energy ${playerInfo.getEnergy()}`
+    `Player ${playerInfo.entityId} is at position ${await playerInfo.getPos()} with energy ${playerInfo.getEnergy()}`
   );
 
   await fillBuckets(context);

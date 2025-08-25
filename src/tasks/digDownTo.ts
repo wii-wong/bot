@@ -1,11 +1,9 @@
 import { Vec3 } from "@dust/world/internal";
 import { isBlockPassThrough } from "../actions/blockCategory";
 import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
-import { getPlayerInfo } from "../actions/getPlayerInfo";
 import { mineUntilDestroyed } from "../actions/mine";
 import { move } from "../actions/move";
 import { BotContext } from "../types";
-import { walletClient } from "../utils/chain";
 
 /**
  * Digs down from the player's current position until reaching the block above the target
@@ -16,7 +14,7 @@ export async function digDownTo(target: Vec3, context: BotContext) {
   // Continue digging until the player is just above the target
   while (true) {
     // Get the current player position
-    const playerPos = (await getPlayerInfo(walletClient.account.address)).pos;
+    const playerPos = await context.player.getPos();
 
     // Check if we've reached the position just above the target
     if (playerPos[1] === target[1] + 1 &&
