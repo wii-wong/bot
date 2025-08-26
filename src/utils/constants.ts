@@ -14,3 +14,12 @@ export const MOVE_PLAYER_DELAY = 1000;
 export const MAX_ENTITY_INFLUENCE_RADIUS = 10;
 
 export const BED_POSITION: Vec3 = [226, 71, -2679];
+
+export const enum WorldBoundary {
+    Y_MIN = -64,
+    Y_MAX = 320,
+}
+
+export const CHUNK_SIZE = 16;
+
+export const FALLBACK_CHUNK_BYTECODE = "0x" + "0".repeat(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 2);

@@ -1,9 +1,9 @@
 import { Vec3 } from "@dust/world/internal";
 
 import { move } from "../actions/move";
-import { pathFinding } from "../tasks/pathfinding";
 import { BotContext, MovePlayerOptions } from "../types";
 import { MOVE_PLAYER_DELAY } from "../utils/constants";
+import { pathFinding } from "../utils/pathfinding";
 
 export async function movePlayer(target: Vec3, context: BotContext, options: MovePlayerOptions) {
     const playerPos = await context.player.getPos();

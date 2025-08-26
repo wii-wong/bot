@@ -1,9 +1,29 @@
-import { encodeBlock, getTerrainBlockType, ObjectName, objects, Vec3 } from "@dust/world/internal";
+import { encodeBlock, getTerrainBlockType, ObjectName, objects, Vec3, voxelToChunkPos } from "@dust/world/internal";
 import { publicClient, worldAddress } from "../utils/chain";
 import { stash, tables } from "../utils/stash";
+import { getBlockTypeFromChunkData, getChunkData } from "./getChunkData";
+
+const chunkDataStore: Map<string, string> = new Map();
+
+function getChunkCoordKey(chunkCoord: Vec3) {
+  return `${chunkCoord[0]},${chunkCoord[1]},${chunkCoord[2]}`;
+}
 
 export async function getObjectTypeAt(pos: Vec3): Promise<number> {
+  const chunkCoord: Vec3 = voxelToChunkPos(pos) as Vec3;
+  const chunkCoordKey = getChunkCoordKey(chunkCoord);
+  let chunkData = chunkDataStore.get(chunkCoordKey);
+  if (!chunkData) {
+    chunkData = await getChunkData(chunkCoord);
+    chunkDataStore.set(chunkCoordKey, chunkData);
+    return getBlockTypeFromChunkData(chunkData, pos);
+  }
+  return getBlockTypeFromChunkData(chunkData, pos);
+}
+
+export async function legacyGetObjectTypeAt(pos: Vec3): Promise<number> {
   const objectTypeRecord = stash.getRecord({
+    //@ts-ignore
     table: tables.EntityObjectType,
     key: { entityId: encodeBlock(pos) },
   });
@@ -14,7 +34,7 @@ export async function getObjectTypeAt(pos: Vec3): Promise<number> {
     } catch (error) {
       // Handle the "Chunk not explored" error
       if (error instanceof Error && error.message.includes("Chunk not explored")) {
-        console.log(`Chunk not explored at position [${pos.join(", ")}]`);
+        console.log(`Chunk not explored at position[${pos.join(", ")}]`);
         // Return a default value (0 typically represents air/empty space in voxel games)
         return 0; // Null
       }

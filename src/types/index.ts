@@ -23,3 +23,12 @@ export type MovePlayerOptions = {
     tolerance: number;
     avoidBlocks: ObjectName[];
 }
+
+export enum ObjectCategory {
+    Reachable = 1,
+}
+
+export type FindResourcesOptions = {
+    filterObjectCategories?: ObjectCategory[];
+    originPos?: Vec3;
+}

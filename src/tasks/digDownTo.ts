@@ -1,9 +1,9 @@
 import { Vec3 } from "@dust/world/internal";
-import { isBlockPassThrough } from "../actions/blockCategory";
 import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { mineUntilDestroyed } from "../actions/mine";
 import { move } from "../actions/move";
 import { BotContext } from "../types";
+import { isBlockPassThrough } from "./blockCategory";
 
 /**
  * Digs down from the player's current position until reaching the block above the target

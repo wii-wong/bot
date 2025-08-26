@@ -1,8 +1,8 @@
 // import { categories } from "@dust/world/internal";
 
 import { ObjectName, Vec3 } from "@dust/world/internal";
-import { isBlockPassThrough } from "../actions/blockCategory";
 import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
+import { isBlockPassThrough } from "../tasks/blockCategory";
 import { BotContext, MovePlayerOptions, ToleranceType } from "../types";
 
 // Define Node interface for pathfinding
