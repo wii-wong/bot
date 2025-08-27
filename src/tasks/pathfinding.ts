@@ -4,7 +4,6 @@ import { ObjectName, Vec3 } from "@dust/world/internal";
 import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { isBlockPassThrough } from "../tasks/blockCategory";
 import { BotContext, MovePlayerOptions, ToleranceType } from "../types";
-import { LAVA_MOVE_ENERGY_COST, MOVE_ENERGY_COST, WATER_MOVE_ENERGY_COST } from "./constants";
 
 // Define Node interface for pathfinding
 interface Node {
@@ -87,12 +86,12 @@ export async function pathFinding(
   target: Vec3,
   context: BotContext,
   options: MovePlayerOptions
-): Promise<{ path: Vec3[], costEnergy: bigint }> {
+): Promise<Vec3[]> {
   const playerPos = await context.player.getPos();
 
   // If start and target are the same, return empty path
   if (posEqual(playerPos, target)) {
-    return { path: [], costEnergy: 0n };
+    return [];
   }
 
   // Initialize stack for DFS and visited set
@@ -147,35 +146,7 @@ export async function pathFinding(
         current = current.parent;
       }
 
-      // Calculate total energy cost
-      let totalEnergyCost = 0n;
-
-      // Skip the first position (starting position) when calculating energy cost
-      for (let i = 1; i < path.length; i++) {
-        const pos = path[i];
-        if (!pos) continue; // Skip if position is undefined
-
-        const posBelow: Vec3 = [pos[0], pos[1] - 1, pos[2]];
-        const blockBelowTypeId = await getObjectTypeAt(posBelow);
-
-        try {
-          const blockBelowName = getObjectName(blockBelowTypeId);
-
-          // Determine energy cost based on block type below
-          if (blockBelowName === "Water") {
-            totalEnergyCost += WATER_MOVE_ENERGY_COST;
-          } else if (blockBelowName === "Lava") {
-            totalEnergyCost += LAVA_MOVE_ENERGY_COST;
-          } else {
-            totalEnergyCost += MOVE_ENERGY_COST;
-          }
-        } catch (error) {
-          console.log(`Error checking block below for energy cost: ${error}`);
-          totalEnergyCost += MOVE_ENERGY_COST; // Default to regular move cost on error
-        }
-      }
-
-      return { path, costEnergy: totalEnergyCost };
+      return path;
     }
 
     // Get potential neighbor positions
@@ -269,5 +240,5 @@ export async function pathFinding(
   if (iterations >= maxIterations) {
     console.log("Pathfinding reached maximum iterations limit");
   }
-  return { path: [], costEnergy: 0n };
+  return [];
 }

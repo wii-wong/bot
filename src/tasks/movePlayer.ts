@@ -4,14 +4,16 @@ import { move } from "../actions/move";
 import { BotContext, MovePlayerOptions } from "../types";
 import { getEnergyPercent } from "../utils/common";
 import { MOVE_PLAYER_DELAY } from "../utils/constants";
-import { pathFinding } from "../utils/pathfinding";
+import { calculateMoveCostEnergy } from "./moveCostEnergy";
+import { pathFinding } from "./pathfinding";
 
 export async function movePlayer(target: Vec3, context: BotContext, options: MovePlayerOptions) {
     const playerPos = await context.player.getPos();
     const playerEnergy = await context.player.getEnergy();
     console.log(`Moving player from ${playerPos} to ${target}`);
 
-    const { path, costEnergy } = await pathFinding(target, context, options);
+    const path = await pathFinding(target, context, options);
+    const costEnergy = await calculateMoveCostEnergy(path);
 
     console.log("path found: length: ", path.length, "costEnergy: ", getEnergyPercent(costEnergy));
 
