@@ -23,3 +23,5 @@ export const enum WorldBoundary {
 export const CHUNK_SIZE = 16;
 
 export const FALLBACK_CHUNK_BYTECODE = "0x" + "0".repeat(CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 2);
+
+export const MAX_CONNECTED_DISTANCE = 5;

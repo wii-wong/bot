@@ -11,4 +11,5 @@ export async function pickUpAll(
     packVec3(position)
   ]);
   await context.stashResult.waitForTransaction(txHash);
+  console.log(`Picked up all items at ${position}`);
 }

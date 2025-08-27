@@ -26,6 +26,7 @@ export type MovePlayerOptions = {
 
 export enum ObjectCategory {
     Reachable = 1,
+    OnSurface = 2,
 }
 
 export type FindResourcesOptions = {

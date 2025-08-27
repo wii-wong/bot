@@ -19,14 +19,14 @@ function heuristic(a: Vec3, b: Vec3): number {
   return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
 }
 
-// Helper function to calculate horizontal distance (ignoring y-axis)
+// Helper function to calculate horizontal distance (Manhattan distance ignoring y-axis)
 function horizontalDistance(a: Vec3, b: Vec3): number {
-  return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[2] - b[2]));
+  return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[2] - b[2], 2));
 }
 
 // Helper function to calculate cube distance (Manhattan distance in 3D)
 function cubeDistance(a: Vec3, b: Vec3): number {
-  return Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1]), Math.abs(a[2] - b[2]));
+  return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2) + Math.pow(a[2] - b[2], 2));
 }
 
 // Helper function to check if two positions are equal
