@@ -8,7 +8,7 @@ export async function sleep(
     context: BotContext
 ) {
     console.log(
-        `Sleeping, energy: ${getEnergyPercent(context).toString()}`
+        `Sleeping, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}`
     );
     const bedId = encodeBlock(bed);
     const txHash = await worldContract.write.sleep([

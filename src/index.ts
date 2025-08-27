@@ -34,7 +34,7 @@ async function main() {
 
     console.log("Player info: ");
     console.log("position: ", await context.player.getPos());
-    console.log("energy: ", getEnergyPercent(context), "%");
+    console.log("energy: ", getEnergyPercent(await context.player.getEnergy()), "%");
 
     await runBot(context);
 

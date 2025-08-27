@@ -8,7 +8,7 @@ export async function wakeup(
     context: BotContext
 ) {
     console.log(
-        `Sleeping, energy: ${getEnergyPercent(context).toString()}`
+        `Sleeping, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}`
     );
     const spawnPosition: Vec3 = [bed[0], bed[1] + 1, bed[2]];
     const txHash = await worldContract.write.wakeup([

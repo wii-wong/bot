@@ -8,7 +8,7 @@ export async function move(
   context: BotContext
 ) {
   console.log(
-    `Moving path ${newPosition}, energy: ${getEnergyPercent(context).toString()}`
+    `Moving path ${newPosition}, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}`
   );
   const txHash = await worldContract.write.move([
     context.player.entityId,

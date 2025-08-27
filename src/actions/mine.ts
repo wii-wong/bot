@@ -9,7 +9,7 @@ export async function mineUntilDestroyed(
   context: BotContext
 ) {
   console.log(
-    `Mining ${position}, energy: ${getEnergyPercent(context).toString()}, object is ${getObjectName(await getObjectTypeAt(position))}`
+    `Mining ${position}, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}, object is ${getObjectName(await getObjectTypeAt(position))}`
   );
   const txHash = await worldContract.write.mineUntilDestroyed([
     context.player.entityId,
