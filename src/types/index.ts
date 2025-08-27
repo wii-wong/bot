@@ -33,3 +33,8 @@ export type FindResourcesOptions = {
     filterObjectCategories?: ObjectCategory[];
     originPos?: Vec3;
 }
+
+export type SlotAmount = {
+    slot: number;
+    amount: number;
+}

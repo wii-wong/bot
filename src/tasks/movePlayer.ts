@@ -12,7 +12,7 @@ export async function movePlayer(target: Vec3, context: BotContext, options: Mov
     const playerEnergy = await context.player.getEnergy();
     console.log(`Moving player from ${playerPos} to ${target}`);
 
-    const path = await pathFinding(target, context, options);
+    const path = await pathFinding(target, playerPos, options);
     const costEnergy = await calculateMoveCostEnergy(path);
 
     console.log("path found: length: ", path.length, "costEnergy: ", getEnergyPercent(costEnergy));

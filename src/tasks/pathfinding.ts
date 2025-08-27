@@ -3,7 +3,7 @@
 import { ObjectName, Vec3 } from "@dust/world/internal";
 import { getObjectName, getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { isBlockPassThrough } from "../tasks/blockCategory";
-import { BotContext, MovePlayerOptions, ToleranceType } from "../types";
+import { MovePlayerOptions, ToleranceType } from "../types";
 
 // Define Node interface for pathfinding
 interface Node {
@@ -84,13 +84,12 @@ async function isValidPosition(pos: Vec3, avoidBlocks: ObjectName[]): Promise<bo
 
 export async function pathFinding(
   target: Vec3,
-  context: BotContext,
+  start: Vec3,
   options: MovePlayerOptions
 ): Promise<Vec3[]> {
-  const playerPos = await context.player.getPos();
 
   // If start and target are the same, return empty path
-  if (posEqual(playerPos, target)) {
+  if (posEqual(start, target)) {
     return [];
   }
 
@@ -104,10 +103,10 @@ export async function pathFinding(
 
   // Create start node
   const startNode: Node = {
-    position: playerPos,
+    position: start,
     g: 0,
-    h: heuristic(playerPos, target),
-    f: heuristic(playerPos, target),
+    h: heuristic(start, target),
+    f: heuristic(start, target),
     parent: null
   };
 
