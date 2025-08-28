@@ -1,19 +1,21 @@
-import { encodeBlock, Vec3 } from "@dust/world/internal";
+import { encodeBlock, Recipe, Vec3 } from "@dust/world/internal";
 import { BotContext, SlotAmount } from "../types";
 import { worldContract } from "../utils/chain";
+import { encodeRecipe } from "../utils/common";
 
 export async function craft(
-  context: BotContext,
-  recipe 
-  slots: SlotAmount[]
+  station: Vec3,
+  recipe: Recipe,
+  slots: SlotAmount[],
+  context: BotContext
 ) {
   console.log(`Filling bucket in slot ${slots}`);
   const txHash = await worldContract.write.craftWithStation([
     context.player.entityId,
     encodeBlock(station),
-    recipeId,
+    encodeRecipe(recipe),
     slots,
   ]);
-  console.log(`Bucket filled in slot ${slots}, txHash: ${txHash}`);
-  await stashResult.waitForTransaction(txHash);
+  console.log(`Crafting ${recipe.outputs} in slot ${slots}, txHash: ${txHash}`);
+  await context.stashResult.waitForTransaction(txHash);
 }

@@ -1,11 +1,11 @@
 import mudConfig from "@dust/world/mud.config";
-import { Hex } from "viem";
-import { maxPlayerInventorySlots } from "../utils/constants";
+import { BotContext } from "../types";
+import { maxPlayerInventorySlots as MAX_PLAYER_INVENTORY_SLOTS } from "../utils/constants";
 import { stash } from "../utils/stash";
 
 export function getSlotsWithObject(
-  owner: Hex,
-  objectType: number
+  objectType: number,
+  context: BotContext
 ): {
   slot: number;
   amount: number;
@@ -14,11 +14,11 @@ export function getSlotsWithObject(
     slot: number;
     amount: number;
   }[] = [];
-  for (let i = 0; i < maxPlayerInventorySlots; i++) {
+  for (let i = 0; i < MAX_PLAYER_INVENTORY_SLOTS; i++) {
     const inventorySlot = stash.getRecord({
       table: mudConfig.tables.InventorySlot,
       key: {
-        owner,
+        owner: context.player.entityId,
         slot: i,
       },
     });
