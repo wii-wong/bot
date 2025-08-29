@@ -1,5 +1,5 @@
 import { Recipe } from "@dust/world/internal";
-import { encodePacked, Hex, keccak256 } from "viem";
+import { encodeAbiParameters, Hex, keccak256 } from "viem";
 import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { MAX_PLAYER_ENERGY } from "./constants";
 
@@ -31,9 +31,18 @@ export function encodeRecipe(recipe: Recipe): Hex {
         // Equivalent to abi.encode in Solidity
         // We encode each component separately to match the Solidity implementation
         // This creates a byte array that's then hashed
-        encodePacked(
-            ['uint16', 'uint16[]', 'uint16[]', 'uint16[]', 'uint16[]'],
-            [stationObjectType, inputTypes, inputAmounts as number[], outputTypes, outputAmounts as number[]]
+        encodeAbiParameters([
+            { type: 'uint16' },
+            { type: 'uint16[]' },
+            { type: 'uint16[]' },
+            { type: 'uint16[]' },
+            { type: 'uint16[]' }
+        ], [
+            stationObjectType,
+            inputTypes,
+            inputAmounts as number[],
+            outputTypes,
+            outputAmounts as number[]]
         )
     );
 }

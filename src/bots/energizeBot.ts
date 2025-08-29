@@ -59,7 +59,32 @@ export async function energizeBot(context: BotContext) {
       continue;
     }
     console.log('crafting: ', recipe);
-    await craft(POWER_STONE_POSITION, recipe, slots, context);
+
+    // Check if the total amount exceeds the recipe requirement
+    const requiredAmount = recipe.inputs?.[0]?.[1];
+    if (inputCnt > requiredAmount) {
+      // Create adjusted slots that sum to exactly the required amount
+      const adjustedSlots = [];
+      let remainingAmount: number = requiredAmount as number;
+
+      for (const slot of slots) {
+        if (remainingAmount <= 0) break;
+
+        const amountToUse = Math.min(slot.amount, remainingAmount);
+        adjustedSlots.push({
+          slot: slot.slot,
+          amount: amountToUse
+        });
+
+        remainingAmount -= amountToUse;
+      }
+
+      console.log('adjusted slots to match recipe requirement: ', adjustedSlots);
+      await craft(POWER_STONE_POSITION, recipe, adjustedSlots, context);
+    } else {
+      // Use all slots as is since the total amount equals the requirement
+      await craft(POWER_STONE_POSITION, recipe, slots, context);
+    }
   }
 
   const batterySlots = getSlotsWithObject(getObjectTypeId("Battery"), context);
