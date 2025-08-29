@@ -1,26 +1,23 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
-import { movePlayer } from "./tasks/movePlayer";
-import { BotContext, ToleranceType } from "./types";
+import { energizeBot } from "./bots/energizeBot";
+import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
-import { BED_POSITION } from "./utils/constants";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
-    // await findResources("IronOre", 50, context, {
-    //     filterObjectCategories: [ObjectCategory.Reachable]
+    await energizeBot(context);
+    // await movePlayer(BED_POSITION, context, {
+    //     toleranceType: ToleranceType.Cube,
+    //     tolerance: 5,
+    //     avoidBlocks: ["Lava"],
     // });
-    await movePlayer(BED_POSITION, context, {
-        toleranceType: ToleranceType.Cube,
-        tolerance: 2,
-        avoidBlocks: ["Lava"],
-    });
     // await pickUpAll([97, 222, -1240], context);
     // await mineUntilDestroyed([850, 80, -2694], context);
-    // await sleep(BED_POSITION, context);
-    // await randomSpawn(context);
+    // await playerSleep(BED_POSITION, context);
+    // await spawnFromTile(SPAWN_TILE, context);
 }
 
 async function main() {

@@ -3,7 +3,7 @@ import { BotContext } from "../types";
 import { worldContract } from "../utils/chain";
 import { getEnergyPercent } from "../utils/common";
 
-export async function sleep(
+export async function playerSleep(
     bed: Vec3,
     context: BotContext
 ) {

@@ -14,7 +14,9 @@ export const MOVE_PLAYER_DELAY = 1000;
 export const MAX_ENTITY_INFLUENCE_RADIUS = 10;
 
 export const BED_POSITION: Vec3 = [226, 71, -2679];
-export const SPAWN_TILE: Vec3 = [223, 71, -2682];
+export const SPAWN_TILE: Vec3 = [223, 71, -2681];
+export const POWER_STONE_POSITION: Vec3 = [225, 71, -2680];
+export const FORCE_FIELD_POSITION: Vec3 = [226, 71, -2680];
 
 export const enum WorldBoundary {
     Y_MIN = -64,

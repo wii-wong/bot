@@ -22,6 +22,8 @@ export type MovePlayerOptions = {
     toleranceType: ToleranceType;
     tolerance: number;
     avoidBlocks: ObjectName[];
+    maxLoop?: number;
+    fastMode?: boolean;
 }
 
 export enum ObjectCategory {

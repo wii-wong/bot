@@ -1,6 +1,7 @@
-import { packVec3 } from "@dust/world/internal";
+import { encodeBlock, packVec3, Vec3 } from "@dust/world/internal";
 import { BotContext } from "../types";
 import { publicClient, worldContract } from "../utils/chain";
+import { MAX_PLAYER_ENERGY } from "../utils/constants";
 
 export async function randomSpawn(
   context: BotContext
@@ -44,5 +45,25 @@ export async function randomSpawn(
   const playerPos = await context.player.getPos();
   console.log(
     `Random spawn done: pos: ${playerPos}`
+  );
+}
+
+export async function spawnFromTile(spawnTile: Vec3, context: BotContext) {
+  // Check if player has not died (energy is not 0)
+  if (context.player.getEnergy() !== 0n) {
+    throw new Error("Player has not died, spawn is not allowed!");
+  }
+
+  const txHash = await worldContract.write.spawn([
+    encodeBlock(spawnTile),
+    packVec3([spawnTile[0], spawnTile[1] + 1, spawnTile[2]]),
+    MAX_PLAYER_ENERGY / 4n,
+    "0x00"
+  ]);
+
+  await context.stashResult.waitForTransaction(txHash);
+  const playerPos = await context.player.getPos();
+  console.log(
+    `Spawn done: pos: ${playerPos}`
   );
 }

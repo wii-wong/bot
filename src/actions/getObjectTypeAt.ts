@@ -9,7 +9,7 @@ function getChunkCoordKey(chunkCoord: Vec3) {
   return `${chunkCoord[0]},${chunkCoord[1]},${chunkCoord[2]}`;
 }
 
-export async function getObjectTypeAt(pos: Vec3): Promise<number> {
+export async function getObjectTypeAtByChunkData(pos: Vec3): Promise<number> {
   const chunkCoord: Vec3 = voxelToChunkPos(pos) as Vec3;
   const chunkCoordKey = getChunkCoordKey(chunkCoord);
   let chunkData = chunkDataStore.get(chunkCoordKey);
@@ -21,7 +21,7 @@ export async function getObjectTypeAt(pos: Vec3): Promise<number> {
   return getBlockTypeFromChunkData(chunkData, pos);
 }
 
-export async function legacyGetObjectTypeAt(pos: Vec3): Promise<number> {
+export async function getObjectTypeAt(pos: Vec3): Promise<number> {
   const objectTypeRecord = stash.getRecord({
     //@ts-ignore
     table: tables.EntityObjectType,

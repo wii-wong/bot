@@ -2,13 +2,13 @@ import {
   ObjectName,
   Vec3
 } from "@dust/world/internal";
-import { getObjectTypeAt, getObjectTypeId } from "../actions/getObjectTypeAt";
+import { getObjectTypeAtByChunkData, getObjectTypeId } from "../actions/getObjectTypeAt";
 import { BotContext, FindResourcesOptions } from "../types";
 import { getObjectCategory } from "./blockCategory";
 
-export async function findResources(objectName: ObjectName, radius: number, context: BotContext, options: FindResourcesOptions) {
+export async function findResources(objectNames: ObjectName[], radius: number, context: BotContext, options: FindResourcesOptions) {
   const { filterObjectCategories, originPos } = options;
-  const targetObjectType = getObjectTypeId(objectName);
+  const targetObjectTypes = objectNames.map(objectName => getObjectTypeId(objectName));
 
   const pos = originPos ?? await context.player.getPos();
 
@@ -20,8 +20,8 @@ export async function findResources(objectName: ObjectName, radius: number, cont
   for (let x = startPos[0]; x <= endPos[0]; x++) {
     for (let y = startPos[1]; y <= endPos[1]; y++) {
       for (let z = startPos[2]; z <= endPos[2]; z++) {
-        const objectType = await getObjectTypeAt([x, y, z]);
-        if (objectType === targetObjectType) {
+        const objectType = await getObjectTypeAtByChunkData([x, y, z]);
+        if (targetObjectTypes.includes(objectType)) {
           const categories = await getObjectCategory([x, y, z]);
           if (filterObjectCategories) {
             for (const filterObjectCategory of filterObjectCategories) {

@@ -12,14 +12,20 @@ export async function movePlayer(target: Vec3, context: BotContext, options: Mov
     const playerEnergy = await context.player.getEnergy();
     console.log(`Moving player from ${playerPos} to ${target}`);
 
-    const path = await pathFinding(target, playerPos, options);
+    let path: Vec3[] = [];
+    try {
+        path = await pathFinding(target, playerPos, options);
+    } catch (error) {
+        console.log("Pathfinding failed!");
+        return false;
+    }
     const costEnergy = await calculateMoveCostEnergy(path);
 
     console.log("path found: length: ", path.length, "costEnergy: ", getEnergyPercent(costEnergy));
 
     if (playerEnergy < costEnergy) {
         console.log("Not enough energy");
-        return;
+        return false;
     }
 
     console.log("After move, player energy will be: ", getEnergyPercent(playerEnergy - costEnergy));
@@ -32,4 +38,5 @@ export async function movePlayer(target: Vec3, context: BotContext, options: Mov
         );
         await new Promise(resolve => setTimeout(resolve, MOVE_PLAYER_DELAY));
     }
+    return true;
 }

@@ -98,7 +98,7 @@ export async function pathFinding(
   const visited = new Set<string>();
 
   // Set a maximum iteration limit to prevent infinite loops
-  const maxIterations = 30000;
+  const maxIterations = options.maxLoop ?? 30000;
   let iterations = 0;
 
   // Create start node
@@ -221,6 +221,11 @@ export async function pathFinding(
       const neighborPos = neighbor.pos;
       const distanceToTarget = neighbor.distance;
 
+      // In fastMode, only add neighbors that are closer to the target than the current node
+      if (options.fastMode && distanceToTarget > currentNode.h) {
+        continue; // Skip this neighbor as it's moving away from or not closer to the target
+      }
+
       // Create neighbor node
       const neighborNode: Node = {
         position: neighborPos,
@@ -237,7 +242,7 @@ export async function pathFinding(
 
   // No path found or max iterations reached
   if (iterations >= maxIterations) {
-    console.log("Pathfinding reached maximum iterations limit");
+    throw new Error("Pathfinding reached maximum iterations limit");
   }
   return [];
 }

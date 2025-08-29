@@ -5,8 +5,8 @@ import { SyncProgress, syncToStash } from "@latticexyz/store-sync/internal";
 import { chain, worldAddress, worldBlockNumber } from "./chain";
 
 export const tables = {
-  // EntityObjectType: mudConfig.tables.EntityObjectType,
-  // InventorySlot: mudConfig.tables.InventorySlot,
+  EntityObjectType: mudConfig.tables.EntityObjectType,
+  InventorySlot: mudConfig.tables.InventorySlot,
   Energy: mudConfig.tables.Energy,
   Mass: mudConfig.tables.Mass,
   // SeedGrowth: mudConfig.tables.SeedGrowth,
