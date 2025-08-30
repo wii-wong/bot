@@ -9,13 +9,12 @@ export async function craft(
   slots: SlotAmount[],
   context: BotContext
 ) {
-  console.log(`Filling bucket in slot ${slots}`);
   const txHash = await worldContract.write.craftWithStation([
     context.player.entityId,
     encodeBlock(station),
     encodeRecipe(recipe),
     slots,
   ]);
-  console.log(`Crafting ${recipe.outputs} in slot ${slots}, txHash: ${txHash}`);
+  console.log(`Crafting, txHash: ${txHash}`);
   await context.stashResult.waitForTransaction(txHash);
 }

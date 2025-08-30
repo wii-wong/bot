@@ -119,7 +119,6 @@ export async function pathFinding(
 
     // Get the current node from the top of the stack (DFS)
     const currentNode = stack.pop();
-    console.log(`current pos: ${currentNode?.position} -> ${target}`);
     if (!currentNode) {
       break;
     }

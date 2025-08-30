@@ -24,6 +24,7 @@ export type MovePlayerOptions = {
     avoidBlocks: ObjectName[];
     maxLoop?: number;
     fastMode?: boolean;
+    ignoreEnergy?: boolean;
 }
 
 export enum ObjectCategory {
@@ -38,5 +39,18 @@ export type FindResourcesOptions = {
 
 export type SlotAmount = {
     slot: number;
+    amount: number;
+}
+
+export type SlotTransfer = {
+    slotFrom: number;
+    slotTo: number;
+    amount: number;
+}
+
+export type InteractWithChestParam = {
+    chestCoord: Vec3;
+    action: 'withdraw' | 'deposit';
+    objectName: ObjectName;
     amount: number;
 }

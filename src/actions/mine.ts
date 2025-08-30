@@ -18,3 +18,24 @@ export async function mineUntilDestroyed(
   ]);
   await context.stashResult.waitForTransaction(txHash);
 }
+
+export async function mineUntilDestroyedWithTool(
+  position: Vec3,
+  slot: number,
+  context: BotContext
+) {
+  console.log(
+    `Mining ${position}, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}, object is ${getObjectName(await getObjectTypeAt(position))}`
+  );
+  try {
+    const txHash = await worldContract.write.mineUntilDestroyed([
+      context.player.entityId,
+      packVec3(position),
+      slot,
+      "0x0"
+    ]);
+    await context.stashResult.waitForTransaction(txHash);
+  } catch (error) {
+    console.log("Mine failed!");
+  }
+}

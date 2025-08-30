@@ -1,14 +1,16 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
-import { energizeBot } from "./bots/energizeBot";
+import { spawnFromTile } from "./actions/spawnPlayer";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
+import { SPAWN_TILE } from "./utils/constants";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
-    await energizeBot(context);
+    await spawnFromTile(SPAWN_TILE, context);
+    // await energizeBot(context);
     // await movePlayer(BED_POSITION, context, {
     //     toleranceType: ToleranceType.Cube,
     //     tolerance: 5,
@@ -17,7 +19,6 @@ async function runBot(context: BotContext) {
     // await pickUpAll([97, 222, -1240], context);
     // await mineUntilDestroyed([850, 80, -2694], context);
     // await playerSleep(BED_POSITION, context);
-    // await spawnFromTile(SPAWN_TILE, context);
 }
 
 async function main() {

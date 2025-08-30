@@ -23,7 +23,7 @@ export async function movePlayer(target: Vec3, context: BotContext, options: Mov
 
     console.log("path found: length: ", path.length, "costEnergy: ", getEnergyPercent(costEnergy));
 
-    if (playerEnergy < costEnergy) {
+    if (!options.ignoreEnergy && playerEnergy < costEnergy) {
         console.log("Not enough energy");
         return false;
     }
@@ -31,12 +31,17 @@ export async function movePlayer(target: Vec3, context: BotContext, options: Mov
     console.log("After move, player energy will be: ", getEnergyPercent(playerEnergy - costEnergy));
 
     // 分开调用，每28个点调用一次，每次调用完等待1s
-    for (let i = 0; i < path.length; i += 28) {
-        await move(
-            path.slice(i, i + 28),
-            context
-        );
-        await new Promise(resolve => setTimeout(resolve, MOVE_PLAYER_DELAY));
+    try {
+        for (let i = 0; i < path.length; i += 28) {
+            await move(
+                path.slice(i, i + 28),
+                context
+            );
+            await new Promise(resolve => setTimeout(resolve, MOVE_PLAYER_DELAY));
+        }
+        return true;
+    } catch (error) {
+        console.log("Move failed!");
+        return false;
     }
-    return true;
 }

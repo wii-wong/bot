@@ -2,7 +2,7 @@ import {
   ObjectName,
   Vec3
 } from "@dust/world/internal";
-import { getObjectTypeAtByChunkData, getObjectTypeId } from "../actions/getObjectTypeAt";
+import { getObjectTypeAt, getObjectTypeId } from "../actions/getObjectTypeAt";
 import { BotContext, FindResourcesOptions } from "../types";
 import { getObjectCategory } from "./blockCategory";
 
@@ -12,6 +12,7 @@ export async function findResources(objectNames: ObjectName[], radius: number, c
 
   const pos = originPos ?? await context.player.getPos();
 
+  radius = Math.floor(radius);
   const startPos: Vec3 = [pos[0] - radius, pos[1] - radius, pos[2] - radius];
   const endPos: Vec3 = [pos[0] + radius, pos[1] + radius, pos[2] + radius];
 
@@ -20,7 +21,7 @@ export async function findResources(objectNames: ObjectName[], radius: number, c
   for (let x = startPos[0]; x <= endPos[0]; x++) {
     for (let y = startPos[1]; y <= endPos[1]; y++) {
       for (let z = startPos[2]; z <= endPos[2]; z++) {
-        const objectType = await getObjectTypeAtByChunkData([x, y, z]);
+        const objectType = await getObjectTypeAt([x, y, z]);
         if (targetObjectTypes.includes(objectType)) {
           const categories = await getObjectCategory([x, y, z]);
           if (filterObjectCategories) {
@@ -38,11 +39,11 @@ export async function findResources(objectNames: ObjectName[], radius: number, c
   }
 
   // sort by distance
-  res.sort((a, b) => {
-    const aDist = Math.sqrt(Math.pow(a[0] - pos[0], 2) + Math.pow(a[1] - pos[1], 2) + Math.pow(a[2] - pos[2], 2));
-    const bDist = Math.sqrt(Math.pow(b[0] - pos[0], 2) + Math.pow(b[1] - pos[1], 2) + Math.pow(b[2] - pos[2], 2));
-    return aDist - bDist;
-  });
+  // res.sort((a, b) => {
+  //   const aDist = Math.sqrt(Math.pow(a[0] - pos[0], 2) + Math.pow(a[1] - pos[1], 2) + Math.pow(a[2] - pos[2], 2));
+  //   const bDist = Math.sqrt(Math.pow(b[0] - pos[0], 2) + Math.pow(b[1] - pos[1], 2) + Math.pow(b[2] - pos[2], 2));
+  //   return aDist - bDist;
+  // });
 
   console.log("findResources", res);
 

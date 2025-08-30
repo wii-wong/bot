@@ -32,14 +32,10 @@ export async function getObjectTypeAt(pos: Vec3): Promise<number> {
     try {
       objectTypeId = await getTerrainBlockType(publicClient, worldAddress, pos);
     } catch (error) {
-      // Handle the "Chunk not explored" error
-      if (error instanceof Error && error.message.includes("Chunk not explored")) {
-        console.log(`Chunk not explored at position[${pos.join(", ")}]`);
-        // Return a default value (0 typically represents air/empty space in voxel games)
-        return 0; // Null
-      }
+      console.log(`Chunk not exist at position[${pos.join(", ")}]`);
+      // Return a default value (0 typically represents air/empty space in voxel games)
+      return 0; // Null
       // Re-throw other errors
-      throw error;
     }
   }
   return objectTypeId;

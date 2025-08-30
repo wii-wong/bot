@@ -1,9 +1,11 @@
 import mudConfig from "@dust/world/mud.config";
+import { Hex } from "viem";
 import { BotContext } from "../types";
 import { maxPlayerInventorySlots as MAX_PLAYER_INVENTORY_SLOTS } from "../utils/constants";
 import { stash } from "../utils/stash";
 
 export function getSlotsWithObject(
+  entityId: Hex,
   objectType: number,
   context: BotContext
 ): {
@@ -18,7 +20,7 @@ export function getSlotsWithObject(
     const inventorySlot = stash.getRecord({
       table: mudConfig.tables.InventorySlot,
       key: {
-        owner: context.player.entityId,
+        owner: entityId,
         slot: i,
       },
     });
@@ -28,6 +30,32 @@ export function getSlotsWithObject(
     slots.push({
       slot: i,
       amount: inventorySlot.amount,
+    });
+  }
+  return slots;
+}
+
+export function getAllSlots(entityId: Hex, context: BotContext) {
+  const slots: {
+    slot: number;
+    amount: number;
+    objectType: number;
+  }[] = [];
+  for (let i = 0; i < MAX_PLAYER_INVENTORY_SLOTS; i++) {
+    const inventorySlot = stash.getRecord({
+      table: mudConfig.tables.InventorySlot,
+      key: {
+        owner: entityId,
+        slot: i,
+      },
+    });
+    if (!inventorySlot) {
+      continue;
+    }
+    slots.push({
+      slot: i,
+      amount: inventorySlot.amount,
+      objectType: inventorySlot.objectType,
     });
   }
   return slots;
