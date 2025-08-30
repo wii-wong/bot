@@ -373,13 +373,5 @@ export async function energizeBot(context: BotContext) {
 
   // Step 4: Return all tools to the chest
   await returnToolsToChest(context);
-
-  // Step 5: Cuisine (jump into lava)
-  // await movePlayer(LAVA_POSITION, context, {
-  //   toleranceType: ToleranceType.Horizontal,
-  //   tolerance: 0,
-  //   avoidBlocks: [],
-  //   ignoreEnergy: true,
-  // });
 }
 

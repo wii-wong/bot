@@ -1,16 +1,17 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
-import { spawnFromTile } from "./actions/spawnPlayer";
+import { energizeBot } from "./bots/energizeBot";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
-import { SPAWN_TILE } from "./utils/constants";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
-    await spawnFromTile(SPAWN_TILE, context);
-    // await energizeBot(context);
+    // await wakeup(BED_POSITION, context);
+    await energizeBot(context);
+    // await cuisine(context);
+    // await spawnFromTile(SPAWN_TILE, context);
     // await movePlayer(BED_POSITION, context, {
     //     toleranceType: ToleranceType.Cube,
     //     tolerance: 5,
