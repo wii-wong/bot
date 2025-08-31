@@ -9,9 +9,10 @@ import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
     // await wakeup(BED_POSITION, context);
-    await energizeBot(context);
     // await cuisine(context);
     // await spawnFromTile(SPAWN_TILE, context);
+    await energizeBot(context);
+
     // await movePlayer(BED_POSITION, context, {
     //     toleranceType: ToleranceType.Cube,
     //     tolerance: 5,
