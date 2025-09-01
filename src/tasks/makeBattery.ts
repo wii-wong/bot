@@ -1,3 +1,4 @@
+import { ObjectName } from "@dust/world/internal";
 import { craft } from "../actions/craft";
 import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
@@ -6,14 +7,14 @@ import { POWER_STONE_POSITION } from "../utils/constants";
 import { RECIPE_BATTERY } from "../utils/recipes";
 import { movePlayer } from "./movePlayer";
 
-export async function makeBattery(context: BotContext): Promise<boolean> {
+export async function makeBattery(logType: ObjectName, context: BotContext): Promise<boolean> {
     await movePlayer(POWER_STONE_POSITION, context, {
         toleranceType: ToleranceType.Cube,
         tolerance: 5,
         avoidBlocks: ["Lava"],
     });
 
-    const objectType = getObjectTypeId("OakLog");
+    const objectType = getObjectTypeId(logType);
 
     const craftBatteryOnce = async () => {
         const slots = getSlotsWithObject(context.player.entityId, objectType, context);

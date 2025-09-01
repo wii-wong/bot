@@ -1,25 +1,20 @@
-import { ObjectName, Vec3 } from "@dust/world/internal";
+import { ObjectName } from "@dust/world/internal";
 import { energizeForceField } from "../tasks/energizeForceField";
 import { makeBattery } from "../tasks/makeBattery";
 import { mineResources } from "../tasks/mineResources";
 import { returnToolsToChest } from "../tasks/returnToolsToChest";
 import { takeTools } from "../tasks/takeTools";
-import { BotContext } from "../types";
-
-type SearchRegion = {
-  topLeftCoord: Vec3;
-  bottomRightCoord: Vec3;
-}
+import { BotContext, WorldRegion } from "../types";
 
 
 /// CONSTANTS
 const searchRadius = 20;
-const searchRegion: SearchRegion = {
-  topLeftCoord: [250, 80, -2900],
-  bottomRightCoord: [640, 28, -2680],
+const searchRegion: WorldRegion = {
+  topLeftCoord: [250, 80, -3000],
+  bottomRightCoord: [800, 28, -2500],
 }
-const searchItem: ObjectName = "OakLog";
-const toolsAvailble = ["CopperAxe", "WoodenPick"] as ObjectName[];
+const searchItem: ObjectName = "JungleLog";
+const toolsAvailble = ["CopperAxe", "WoodenPick", "WoodenAxe"] as ObjectName[];
 
 
 export async function energizeBot(context: BotContext) {
@@ -30,7 +25,7 @@ export async function energizeBot(context: BotContext) {
   await mineResources(context, searchRegion, searchRadius, searchItem, toolsAvailble);
 
   // Step 3: Make battery and energize force field
-  await makeBattery(context);
+  await makeBattery(searchItem, context);
   await energizeForceField(context);
 
   // Step 4: Return all tools to the chest

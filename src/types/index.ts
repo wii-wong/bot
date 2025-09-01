@@ -54,3 +54,8 @@ export type InteractWithChestParam = {
     objectName: ObjectName;
     amount: number;
 }
+
+export type WorldRegion = {
+    topLeftCoord: Vec3;
+    bottomRightCoord: Vec3;
+}

@@ -42,6 +42,12 @@ export async function isBlockReachable(pos: Vec3): Promise<boolean> {
     return false;
 }
 
+export async function isMineable(pos: Vec3): Promise<boolean> {
+    const objectType = await getObjectTypeAt(pos);
+    const objectName = getObjectName(objectType);
+    return categories.Block.objects.includes(objectName as any);
+}
+
 export async function getObjectCategory(pos: Vec3): Promise<ObjectCategory[]> {
     const categories: ObjectCategory[] = [];
     if (await isBlockOnSurface(pos)) {

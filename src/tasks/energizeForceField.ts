@@ -6,18 +6,18 @@ import { FORCE_FIELD_POSITION } from "../utils/constants";
 import { movePlayer } from "./movePlayer";
 
 export async function energizeForceField(context: BotContext) {
+    await movePlayer(FORCE_FIELD_POSITION, context, {
+        toleranceType: ToleranceType.Cube,
+        tolerance: 5,
+        avoidBlocks: ["Lava"],
+    });
+
     const energizeOnce = async () => {
         const batterySlots = getSlotsWithObject(context.player.entityId, getObjectTypeId("Battery"), context);
         if (batterySlots.length == 0) {
             console.log('no battery found');
             return false;
         }
-
-        await movePlayer(FORCE_FIELD_POSITION, context, {
-            toleranceType: ToleranceType.Cube,
-            tolerance: 5,
-            avoidBlocks: ["Lava"],
-        });
 
         await energizeFF(FORCE_FIELD_POSITION, batterySlots, context);
         return true;

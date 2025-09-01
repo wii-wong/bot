@@ -2,22 +2,19 @@ import { ObjectName, Vec3 } from "@dust/world/internal";
 import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { mineUntilDestroyedWithTool } from "../actions/mine";
-import { BotContext, ObjectCategory, ToleranceType } from "../types";
+import { BotContext, ObjectCategory, ToleranceType, WorldRegion } from "../types";
 import { getEnergyPercent } from "../utils/common";
 import { findResources } from "./findResources";
 import { movePlayer } from "./movePlayer";
 
-type SearchRegion = {
-    topLeftCoord: Vec3;
-    bottomRightCoord: Vec3;
-}
+
 
 // Track visited areas and available areas
 let visitedAreas: Set<string> = new Set();
 let availableAreas: { x: number, z: number }[] | null = null;
 let totalAreasCount = 0;
 
-async function getNextArea(searchRegion: SearchRegion, searchRadius: number): Promise<SearchRegion | undefined> {
+async function getNextArea(searchRegion: WorldRegion, searchRadius: number): Promise<WorldRegion | undefined> {
     // Get the dimensions of the search region
     const regionWidth = searchRegion.bottomRightCoord[0] - searchRegion.topLeftCoord[0];
     const regionDepth = searchRegion.bottomRightCoord[2] - searchRegion.topLeftCoord[2];
@@ -74,7 +71,7 @@ async function getNextArea(searchRegion: SearchRegion, searchRadius: number): Pr
     const endZ = Math.min(startZ + searchRadius, searchRegion.bottomRightCoord[2]);
 
     // Create the selected area
-    const currentArea: SearchRegion = {
+    const currentArea: WorldRegion = {
         topLeftCoord: [startX, searchRegion.topLeftCoord[1], startZ],
         bottomRightCoord: [endX, searchRegion.bottomRightCoord[1], endZ]
     };
@@ -84,7 +81,7 @@ async function getNextArea(searchRegion: SearchRegion, searchRadius: number): Pr
     return currentArea;
 }
 
-async function searchResourcesInArea(area: SearchRegion, searchItem: ObjectName, context: BotContext) {
+async function searchResourcesInArea(area: WorldRegion, searchItem: ObjectName, context: BotContext) {
     // Calculate the center of the area
     const centerX = (area.topLeftCoord[0] + area.bottomRightCoord[0]) / 2;
     const centerY = (area.topLeftCoord[1] + area.bottomRightCoord[1]) / 2;
@@ -138,7 +135,7 @@ async function searchResourcesInArea(area: SearchRegion, searchItem: ObjectName,
  */
 export async function mineResources(
     context: BotContext,
-    searchRegion: SearchRegion,
+    searchRegion: WorldRegion,
     searchRadius: number,
     searchItem: ObjectName,
     toolsAvailble: ObjectName[]
@@ -167,7 +164,7 @@ export async function mineResources(
             const success = await movePlayer(point, context, {
                 toleranceType: ToleranceType.Cube,
                 tolerance: 5,
-                avoidBlocks: ["Lava"],
+                avoidBlocks: ["Lava", "Water"],
                 maxLoop: 10000,
             });
 
