@@ -14,7 +14,7 @@ import { movePlayer } from "./movePlayer";
  */
 export async function takeTools(
     context: BotContext,
-    toolsAvailble: ObjectName[] = ["CopperAxe", "WoodenPick"]
+    toolsAvailble: ObjectName[]
 ): Promise<void> {
     // Get all available tools from the chest based on toolsAvailble array
     // Limit to 20 tools total across all tool types
@@ -25,7 +25,7 @@ export async function takeTools(
     });
 
     console.log("Getting tools from chest...");
-    const maxTotalTools = 20;
+    const maxTotalTools = 10;
     let toolsCollected = 0;
 
     for (const tool of toolsAvailble) {

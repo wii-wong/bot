@@ -16,7 +16,7 @@ export const MAX_ENTITY_INFLUENCE_RADIUS = 10;
 
 export const BED_POSITION: Vec3 = [226, 71, -2679];
 export const SPAWN_TILE: Vec3 = [223, 71, -2681];
-export const POWER_STONE_POSITION: Vec3 = [225, 71, -2680];
+export const POWER_STONE_POSITION: Vec3 = [224, 71, -2677];
 export const FORCE_FIELD_POSITION: Vec3 = [226, 71, -2680];
 export const LAVA_POSITION: Vec3 = [265, 76, -2666];
 export const CHEST_POSITION: Vec3 = [227, 71, -2682];

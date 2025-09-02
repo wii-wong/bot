@@ -69,7 +69,8 @@ async function isValidPosition(pos: Vec3, avoidBlocks: ObjectName[]): Promise<bo
   // Check if the block below is Lava (prevent moving on top of Lava)
   try {
     const blockBelowName = getObjectName(blockBelowTypeId);
-    if (avoidBlocks.includes(blockBelowName)) {
+    const playerBlockName = getObjectName(blockTypeId);
+    if (avoidBlocks.includes(blockBelowName) || avoidBlocks.includes(playerBlockName)) {
       return false;
     }
   } catch (error) {
