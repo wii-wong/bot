@@ -2,7 +2,7 @@ import { ObjectName } from "@dust/world/internal";
 import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { BotContext, ToleranceType } from "../types";
-import { CHEST_POSITION } from "../utils/constants";
+import { TOOL_CHEST_POSITION } from "../utils/constants";
 import { InteractWithChest } from "./InteractWithChest";
 import { movePlayer } from "./movePlayer";
 
@@ -12,32 +12,37 @@ import { movePlayer } from "./movePlayer";
  * @param context The bot context
  * @param toolsAvailble Array of tool names to collect from chest
  */
+
+export type TakeToolsParams = {
+    toolsAvailble: ObjectName[];
+    maxTotalTools: number;
+}
+
 export async function takeTools(
-    context: BotContext,
-    toolsAvailble: ObjectName[]
+    params: TakeToolsParams,
+    context: BotContext
 ): Promise<void> {
     // Get all available tools from the chest based on toolsAvailble array
     // Limit to 20 tools total across all tool types
-    await movePlayer(CHEST_POSITION, context, {
+    await movePlayer(TOOL_CHEST_POSITION, context, {
         toleranceType: ToleranceType.Cube,
         tolerance: 5,
         avoidBlocks: ["Lava"],
     });
 
     console.log("Getting tools from chest...");
-    const maxTotalTools = 10;
     let toolsCollected = 0;
 
-    for (const tool of toolsAvailble) {
-        if (toolsCollected >= maxTotalTools) {
+    for (const tool of params.toolsAvailble) {
+        if (toolsCollected >= params.maxTotalTools) {
             break;
         }
 
-        const remainingTools = maxTotalTools - toolsCollected;
+        const remainingTools = params.maxTotalTools - toolsCollected;
         console.log(`Trying to get ${tool} from chest (up to ${remainingTools} more tools)...`);
 
         await InteractWithChest({
-            chestCoord: CHEST_POSITION,
+            chestCoord: TOOL_CHEST_POSITION,
             action: 'withdraw',
             objectName: tool,
             amount: remainingTools

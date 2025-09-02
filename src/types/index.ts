@@ -48,13 +48,6 @@ export type SlotTransfer = {
     amount: number;
 }
 
-export type InteractWithChestParam = {
-    chestCoord: Vec3;
-    action: 'withdraw' | 'deposit';
-    objectName: ObjectName;
-    amount: number;
-}
-
 export type WorldRegion = {
     topLeftCoord: Vec3;
     bottomRightCoord: Vec3;

@@ -2,7 +2,7 @@ import { ObjectName } from "@dust/world/internal";
 import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { BotContext, ToleranceType } from "../types";
-import { CHEST_POSITION } from "../utils/constants";
+import { TOOL_CHEST_POSITION } from "../utils/constants";
 import { InteractWithChest } from "./InteractWithChest";
 import { movePlayer } from "./movePlayer";
 
@@ -18,7 +18,7 @@ export async function returnToolsToChest(
     console.log("Returning tools to chest...");
 
     // Move to chest position first
-    await movePlayer(CHEST_POSITION, context, {
+    await movePlayer(TOOL_CHEST_POSITION, context, {
         toleranceType: ToleranceType.Cube,
         tolerance: 5,
         avoidBlocks: ["Lava"],
@@ -33,7 +33,7 @@ export async function returnToolsToChest(
 
         if (toolSlotsForType.length > 0) {
             await InteractWithChest({
-                chestCoord: CHEST_POSITION,
+                chestCoord: TOOL_CHEST_POSITION,
                 action: 'deposit',
                 objectName: tool,
                 amount: toolSlotsForType.length

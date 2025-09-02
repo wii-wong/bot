@@ -1,19 +1,19 @@
 import { ObjectName } from "@dust/world/internal";
-import { energizeForceField } from "../tasks/energizeForceField";
-import { makeBattery } from "../tasks/makeBattery";
+import { InteractWithChest } from "../tasks/InteractWithChest";
 import { mineResources } from "../tasks/mineResources";
 import { returnToolsToChest } from "../tasks/returnToolsToChest";
 import { takeTools } from "../tasks/takeTools";
 import { BotContext, WorldRegion } from "../types";
+import { RESOURCE_CHEST_POSITION } from "../utils/constants";
 
 
 /// CONSTANTS
 const searchRadius = 20;
 const searchRegion: WorldRegion = {
-  topLeftCoord: [250, 80, -3000],
-  bottomRightCoord: [800, 28, -2500],
+  topLeftCoord: [97, 69, -3005],
+  bottomRightCoord: [266, 77, -2790],
 }
-const searchItem: ObjectName = "JungleLog";
+const searchItem: ObjectName = "RedMushroomBlock";
 const toolsAvailble = ["CopperAxe", "WoodenPick", "WoodenAxe"] as ObjectName[];
 
 
@@ -22,11 +22,10 @@ export async function energizeBot(context: BotContext) {
   await takeTools({ toolsAvailble, maxTotalTools: 10 }, context);
 
   // Step 2: Main mining loop
-  await mineResources({ toolsAvailble, searchRegion, searchRadius, searchItem }, context);
+  await mineResources({ searchRegion, searchRadius, searchItem, toolsAvailble }, context);
 
-  // Step 3: Make battery and energize force field
-  await makeBattery(searchItem, context);
-  await energizeForceField(context);
+  // Step 3: place resources into chest
+  await InteractWithChest({ objectName: searchItem, chestCoord: RESOURCE_CHEST_POSITION, amount: 10e8, action: "deposit" }, context);
 
   // Step 4: Return all tools to the chest
   await returnToolsToChest(context, toolsAvailble);

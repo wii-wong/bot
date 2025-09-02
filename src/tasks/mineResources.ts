@@ -133,13 +133,19 @@ async function searchResourcesInArea(area: WorldRegion, searchItem: ObjectName, 
  * @param searchItem The item to search for
  * @param toolsAvailble The tools available for mining
  */
+
+type MineResourcesParams = {
+    toolsAvailble: ObjectName[];
+    searchRegion: WorldRegion;
+    searchRadius: number;
+    searchItem: ObjectName;
+}
+
 export async function mineResources(
-    context: BotContext,
-    searchRegion: WorldRegion,
-    searchRadius: number,
-    searchItem: ObjectName,
-    toolsAvailble: ObjectName[]
+    params: MineResourcesParams,
+    context: BotContext
 ): Promise<void> {
+    const { toolsAvailble, searchRegion, searchRadius, searchItem } = params;
     let currentArea = await getNextArea(searchRegion, searchRadius);
 
     // Continue mining until we run out of energy or areas

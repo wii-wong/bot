@@ -48,6 +48,11 @@ export async function isMineable(pos: Vec3): Promise<boolean> {
     return categories.Block.objects.includes(objectName as any);
 }
 
+export async function isStackable(objectTypeId: number) {
+    const objectName = getObjectName(objectTypeId);
+    return !categories.UniqueObject.objects.includes(objectName as any);
+}
+
 export async function getObjectCategory(pos: Vec3): Promise<ObjectCategory[]> {
     const categories: ObjectCategory[] = [];
     if (await isBlockOnSurface(pos)) {
