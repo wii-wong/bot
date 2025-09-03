@@ -32,10 +32,9 @@ export async function getObjectTypeAt(pos: Vec3): Promise<number> {
     try {
       objectTypeId = await getTerrainBlockType(publicClient, worldAddress, pos);
     } catch (error) {
-      console.log(`Chunk not exist at position[${pos.join(", ")}]`);
+      // console.log(`Chunk not exist at position[${pos.join(", ")}]`);
       // Return a default value (0 typically represents air/empty space in voxel games)
       return 0; // Null
-      // Re-throw other errors
     }
   }
   return objectTypeId;
