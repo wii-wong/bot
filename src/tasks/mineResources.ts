@@ -81,7 +81,7 @@ async function getNextArea(searchRegion: WorldRegion, searchRadius: number): Pro
     return currentArea;
 }
 
-async function searchResourcesInArea(area: WorldRegion, searchItem: ObjectName, context: BotContext) {
+async function searchResourcesInArea(area: WorldRegion, searchItem: ObjectName, context: BotContext, ignoreTimeLimit: boolean = false) {
     // Calculate the center of the area
     const centerX = (area.topLeftCoord[0] + area.bottomRightCoord[0]) / 2;
     const centerY = (area.topLeftCoord[1] + area.bottomRightCoord[1]) / 2;
@@ -100,19 +100,24 @@ async function searchResourcesInArea(area: WorldRegion, searchItem: ObjectName, 
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    // Add timeout mechanism for findResources
+    // Add timeout mechanism for findResources (unless ignoreTimeLimit is true)
     try {
-        // Create a promise that rejects after 2 minutes (120000ms)
-        const timeoutPromise = new Promise<Vec3[]>((_, reject) => {
-            const timeoutId = setTimeout(() => {
-                // Abort the search operation when timeout occurs
-                abortController.abort();
-                reject(new Error('findResources timeout: exceeded 2 minutes'));
-            }, 2 * 60 * 1000);
+        // If ignoreTimeLimit is true, skip the timeout mechanism
+        const timeoutPromise = ignoreTimeLimit ?
+            new Promise<Vec3[]>(() => {
+                // This promise never resolves on its own, allowing the search to run without time limit
+                // It will only complete when the search completes
+            }) :
+            new Promise<Vec3[]>((_, reject) => {
+                const timeoutId = setTimeout(() => {
+                    // Abort the search operation when timeout occurs
+                    abortController.abort();
+                    reject(new Error('findResources timeout: exceeded 2 minutes'));
+                }, 2 * 60 * 1000);
 
-            // Clear the timeout if it's not needed
-            return () => clearTimeout(timeoutId);
-        });
+                // Clear the timeout if it's not needed
+                return () => clearTimeout(timeoutId);
+            });
 
         // Create a cancellable wrapper around findResources
         const cancellableFindResources = async (): Promise<Vec3[]> => {
@@ -183,13 +188,14 @@ type MineResourcesParams = {
     searchRadius: number;
     searchItem: ObjectName;
     maxResourceCount?: number;
+    ignoreTimeLimit?: boolean;
 }
 
 export async function mineResources(
     params: MineResourcesParams,
     context: BotContext
 ): Promise<void> {
-    const { toolsAvailble, searchRegion, searchRadius, searchItem, maxResourceCount } = params;
+    const { toolsAvailble, searchRegion, searchRadius, searchItem, maxResourceCount, ignoreTimeLimit = false } = params;
     // Track how many resources have been collected
     let resourcesCollected = 0;
     let currentArea = await getNextArea(searchRegion, searchRadius);
@@ -197,7 +203,7 @@ export async function mineResources(
     // Continue mining until we run out of energy or areas
     while (currentArea) {
         // Get resource positions in the current area
-        const resourcePoints = await searchResourcesInArea(currentArea, searchItem, context);
+        const resourcePoints = await searchResourcesInArea(currentArea, searchItem, context, ignoreTimeLimit);
         console.log(`Found ${resourcePoints.length} resources in current area`);
 
         // Mine each resource in the area

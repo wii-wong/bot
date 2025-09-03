@@ -13,12 +13,13 @@ async function runBot(context: BotContext) {
     // await spawnFromTile(SPAWN_TILE, context);
     // await energizeBot(context);
     await collectingBot(context);
-    // await pickUpAll([319, 61, -2429], context);
-    // await movePlayer(BED_POSITION, context, {
+    // await movePlayer([111, 78, -2989], context, {
     //     toleranceType: ToleranceType.Cube,
     //     tolerance: 5,
-    //     avoidBlocks: ["Lava"],
+    //     avoidBlocks: ["Lava", "Water"],
     // });
+    // await pickUpAll([111, 78, -2989], context);
+
     // await mineUntilDestroyed([850, 80, -2694], context);
     // await playerSleep(BED_POSITION, context);
 }
