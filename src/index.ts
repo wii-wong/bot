@@ -1,7 +1,7 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
-import { energizeBot } from "./bots/energizeBot";
+import { collectingBot } from "./bots/collectingBot";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
@@ -11,7 +11,8 @@ async function runBot(context: BotContext) {
     // await wakeup(BED_POSITION, context);
     // await cuisine(context);
     // await spawnFromTile(SPAWN_TILE, context);
-    await energizeBot(context);
+    // await energizeBot(context);
+    await collectingBot(context);
     // await pickUpAll([319, 61, -2429], context);
     // await movePlayer(BED_POSITION, context, {
     //     toleranceType: ToleranceType.Cube,

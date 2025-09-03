@@ -36,6 +36,6 @@ export async function mineUntilDestroyedWithTool(
     ]);
     await context.stashResult.waitForTransaction(txHash);
   } catch (error) {
-    console.log("Mine failed!");
+    console.log("Mine failed!, ", error);
   }
 }

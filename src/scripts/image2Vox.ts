@@ -58,9 +58,17 @@ export async function image2Vox(param: image2VoxParam) {
         const newWidth = Math.round(originalWidth * resizeRatio);
         const newHeight = Math.round(originalHeight * resizeRatio);
 
-        // Resize the image and get raw pixel data
-        const { data, info } = await sharp(imagePath)
-            .resize(newWidth, newHeight)
+        // Resize the image
+        const resizedImage = sharp(imagePath).resize(newWidth, newHeight);
+
+        // Save the resized image to output folder
+        const resizedImageFilename = path.basename(imageFilename);
+        const resizedImagePath = path.resolve('src/scripts/output', resizedImageFilename);
+        await resizedImage.toFile(resizedImagePath);
+        console.log(`Resized image saved to: ${resizedImagePath}`);
+
+        // Get raw pixel data for voxel processing
+        const { data, info } = await resizedImage
             .raw()
             .toBuffer({ resolveWithObject: true });
 

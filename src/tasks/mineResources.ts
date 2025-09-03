@@ -96,30 +96,73 @@ async function searchResourcesInArea(area: WorldRegion, searchItem: ObjectName, 
 
     console.log(`Searching in centerPoint: ${centerPoint}, areaRadius: ${areaRadius}`);
 
+    // Create an AbortController to manage cancellation
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
     // Add timeout mechanism for findResources
     try {
         // Create a promise that rejects after 2 minutes (120000ms)
         const timeoutPromise = new Promise<Vec3[]>((_, reject) => {
             const timeoutId = setTimeout(() => {
-                reject(new Error('findResources timeout: exceeded 1 minute'));
+                // Abort the search operation when timeout occurs
+                abortController.abort();
+                reject(new Error('findResources timeout: exceeded 2 minutes'));
             }, 2 * 60 * 1000);
 
             // Clear the timeout if it's not needed
             return () => clearTimeout(timeoutId);
         });
 
+        // Create a cancellable wrapper around findResources
+        const cancellableFindResources = async (): Promise<Vec3[]> => {
+            // Check if already aborted before starting
+            if (signal.aborted) {
+                console.log("Search aborted before starting");
+                return [];
+            }
+
+            // Store the search task reference
+            let searchTask: Promise<Vec3[]> | null = null;
+
+            try {
+                // Start the search task
+                searchTask = findResources([searchItem], areaRadius, context, {
+                    originPos: centerPoint,
+                    filterObjectCategories: [ObjectCategory.Reachable]
+                });
+
+                // Set up abort listener
+                signal.addEventListener('abort', () => {
+                    console.log("Search operation aborted");
+                    // The search will continue in the background, but we'll return early
+                });
+
+                // Wait for the search to complete
+                return await searchTask;
+            } catch (error) {
+                if (signal.aborted) {
+                    console.log("Search was aborted during execution");
+                    return [];
+                }
+                throw error;
+            }
+        };
+
         // Race between the findResources call and the timeout
         return await Promise.race([
-            findResources([searchItem], areaRadius, context, {
-                originPos: centerPoint,
-                filterObjectCategories: [ObjectCategory.Reachable]
-            }),
+            cancellableFindResources(),
             timeoutPromise
         ]);
     } catch (error) {
+        // Make sure to abort the operation if it's still running
+        if (!signal.aborted) {
+            abortController.abort();
+        }
+
         // Handle the unknown error type properly
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.log(`Skipping area due to timeout: ${errorMessage}`);
+        console.log(`Skipping area due to timeout or error: ${errorMessage}`);
         return []; // Return empty array to skip this area
     }
 }
@@ -139,13 +182,16 @@ type MineResourcesParams = {
     searchRegion: WorldRegion;
     searchRadius: number;
     searchItem: ObjectName;
+    maxResourceCount?: number;
 }
 
 export async function mineResources(
     params: MineResourcesParams,
     context: BotContext
 ): Promise<void> {
-    const { toolsAvailble, searchRegion, searchRadius, searchItem } = params;
+    const { toolsAvailble, searchRegion, searchRadius, searchItem, maxResourceCount } = params;
+    // Track how many resources have been collected
+    let resourcesCollected = 0;
     let currentArea = await getNextArea(searchRegion, searchRadius);
 
     // Continue mining until we run out of energy or areas
@@ -162,7 +208,7 @@ export async function mineResources(
 
             // If energy is too low, break the loop
             if (energyPercent <= 5) {
-                console.log("Energy too low, stopping mining");
+                console.log("Energy too low, stopping mining, collected resources: ", resourcesCollected);
                 return;
             }
 
@@ -190,7 +236,7 @@ export async function mineResources(
 
             // If no tools available, stop mining
             if (toolSlots.length === 0) {
-                console.log("No tools available, stopping mining");
+                console.log("No tools available, stopping mining, collected resources: ", resourcesCollected);
                 return;
             }
 
@@ -198,8 +244,17 @@ export async function mineResources(
             const toolSlot = toolSlots[0]?.slot;
             if (toolSlot !== undefined) {
                 await mineUntilDestroyedWithTool(point, toolSlot, context);
+
+                // Increment the counter for collected resources
+                resourcesCollected++;
+
+                // Check if we've reached the maximum resource count
+                if (maxResourceCount !== undefined && resourcesCollected >= maxResourceCount) {
+                    console.log(`Reached maximum resource count (${maxResourceCount}), stopping mining`);
+                    return;
+                }
             } else {
-                console.log("No valid tool slot found, stopping mining");
+                console.log("No valid tool slot found, stopping mining, collected resources: ", resourcesCollected);
                 return;
             }
         }

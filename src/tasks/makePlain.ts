@@ -36,6 +36,13 @@ export async function makePlain(params: MakePlainParams, context: BotContext) {
                     continue; // Skip if not mineable
                 }
 
+                // Check player energy
+                const energyPercent = await context.player.getEnergy();
+                if (energyPercent <= 5) {
+                    console.log("Low energy, stopping makePlain operation");
+                    return;
+                }
+
                 // Check for available tools before mining
                 // Get all tools from player inventory based on withTools array
                 let toolSlots = [];
