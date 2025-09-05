@@ -55,9 +55,9 @@ export async function isStackable(objectTypeId: number) {
 
 export async function getObjectCategory(pos: Vec3): Promise<ObjectCategory[]> {
     const categories: ObjectCategory[] = [];
-    if (await isBlockOnSurface(pos)) {
-        categories.push(ObjectCategory.OnSurface);
-    }
+    // if (await isBlockOnSurface(pos)) {
+    //     categories.push(ObjectCategory.OnSurface);
+    // }
     if (await isBlockReachable(pos)) {
         categories.push(ObjectCategory.Reachable);
     }

@@ -1,7 +1,8 @@
-import { packVec3, Vec3 } from "@dust/world/internal";
+import { packVec3, Vec3, voxelToChunkPos } from "@dust/world/internal";
 import { BotContext } from "../types";
 import { worldContract } from "../utils/chain";
 import { getEnergyPercent } from "../utils/common";
+import { CHUNK_COMMITMENT_DELAY_TIME } from "../utils/constants";
 import { getObjectName, getObjectTypeAt } from "./getObjectTypeAt";
 
 export async function mineUntilDestroyed(
@@ -37,5 +38,22 @@ export async function mineUntilDestroyedWithTool(
     await context.stashResult.waitForTransaction(txHash);
   } catch (error) {
     console.log("Mine failed!");
+
+    // Check if error is "Chunk commitment expired"
+    if (error instanceof Error && error.message.includes("Chunk commitment expired")) {
+      console.log("Chunk commitment expired, recommitting chunk and retrying...");
+      // Call chunkCommit and then retry
+      const commitTxHash = await worldContract.write.chunkCommit([
+        context.player.entityId,
+        packVec3(voxelToChunkPos(position)),
+      ]);
+      await context.stashResult.waitForTransaction(commitTxHash);
+
+      // Wait for chunk commit to be processed (sleep for 1 block of chain)
+      await new Promise((resolve) => setTimeout(resolve, CHUNK_COMMITMENT_DELAY_TIME));
+
+      // Retry mining
+      return mineUntilDestroyedWithTool(position, slot, context);
+    }
   }
 }

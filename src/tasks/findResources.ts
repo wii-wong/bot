@@ -12,9 +12,8 @@ export async function findResources(objectNames: ObjectName[], radius: number, c
 
   const pos = originPos ?? await context.player.getPos();
 
-  radius = Math.floor(radius);
-  const startPos: Vec3 = [pos[0] - radius, pos[1] - radius, pos[2] - radius];
-  const endPos: Vec3 = [pos[0] + radius, pos[1] + radius, pos[2] + radius];
+  const startPos: Vec3 = [Math.floor(pos[0] - radius), Math.floor(pos[1] - radius), Math.floor(pos[2] - radius)];
+  const endPos: Vec3 = [Math.floor(pos[0] + radius), Math.floor(pos[1] + radius), Math.floor(pos[2] + radius)];
 
   const res: Vec3[] = [];
 

@@ -3,6 +3,7 @@ import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { mineUntilDestroyedWithTool } from "../actions/mine";
 import { BotContext, ToleranceType, WorldRegion } from "../types";
+import { getEnergyPercent } from "../utils/common";
 import { isMineable } from "./blockCategory";
 import { movePlayer } from "./movePlayer";
 
@@ -37,8 +38,8 @@ export async function makePlain(params: MakePlainParams, context: BotContext) {
                 }
 
                 // Check player energy
-                const energyPercent = await context.player.getEnergy();
-                if (energyPercent <= 5) {
+                const energyPercent = getEnergyPercent(await context.player.getEnergy());
+                if (energyPercent <= 4) {
                     console.log("Low energy, stopping makePlain operation");
                     return;
                 }

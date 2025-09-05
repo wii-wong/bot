@@ -99,7 +99,7 @@ export async function image2Vox(param: image2VoxParam) {
                 voxels.push({
                     x,
                     y: 0, // All voxels at the same y level for a 2D image
-                    z: newHeight - y - 1, // Invert y-axis to match the coordinate system
+                    z: y, // Invert y-axis to match the coordinate system
                     material: blockType
                 });
             }

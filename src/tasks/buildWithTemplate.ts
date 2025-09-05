@@ -1,8 +1,10 @@
 import { Vec3 } from "@dust/world/internal";
 import * as fs from "fs";
 import { build } from "../actions/build";
+import { getObjectTypeAt } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
 import { BotContext, ToleranceType } from "../types";
+import { isBlockPassThrough } from "./blockCategory";
 import { movePlayer } from "./movePlayer";
 
 /** 
@@ -113,6 +115,13 @@ export async function buildWithTemplate(
             Math.pow(playerPos[2] - buildPos[2], 2)
         );
 
+        // Check if the target position's block type is passThrough
+        const blockTypeId = await getObjectTypeAt(buildPos);
+        if (!isBlockPassThrough(blockTypeId)) {
+            console.warn(`Skipping position (${buildPos[0]}, ${buildPos[1]}, ${buildPos[2]}) because block type is not passThrough`);
+            continue;
+        }
+
         // If player is too far, move closer
         if (distanceToPos > 5) {
             const moveSuccess = await movePlayer(
@@ -136,7 +145,7 @@ export async function buildWithTemplate(
             await build(buildPos, slotToUse, context);
             console.log(`Built voxel at (${buildPos[0]}, ${buildPos[1]}, ${buildPos[2]}) with material ${voxel.material}`);
         } catch (error) {
-            console.error(`Failed to build at (${buildPos[0]}, ${buildPos[1]}, ${buildPos[2]}):`, error);
+            console.error(`Failed to build at (${buildPos[0]}, ${buildPos[1]}, ${buildPos[2]}).`);
         }
     }
 

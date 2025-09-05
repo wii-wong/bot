@@ -11,6 +11,7 @@ export const upperFarmCoord: Vec3 = [892, 63, -1362];
 export const MAX_PLAYER_ENERGY = 817600000000000000n;
 
 export const MOVE_PLAYER_DELAY = 1000;
+export const CHUNK_COMMITMENT_DELAY_TIME = 2000;
 
 export const MAX_ENTITY_INFLUENCE_RADIUS = 10;
 

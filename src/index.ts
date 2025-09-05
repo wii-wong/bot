@@ -1,10 +1,12 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
-import { collectingBot } from "./bots/collectingBot";
-import { BotContext } from "./types";
+import { playerSleep } from "./actions/sleep";
+import { movePlayer } from "./tasks/movePlayer";
+import { BotContext, ToleranceType } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
+import { BED_POSITION } from "./utils/constants";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
@@ -12,16 +14,14 @@ async function runBot(context: BotContext) {
     // await cuisine(context);
     // await spawnFromTile(SPAWN_TILE, context);
     // await energizeBot(context);
-    await collectingBot(context);
-    // await movePlayer([111, 78, -2989], context, {
-    //     toleranceType: ToleranceType.Cube,
-    //     tolerance: 5,
-    //     avoidBlocks: ["Lava", "Water"],
-    // });
+    // console.log(await getSlotsWithObject(encodeBlock(RESOURCE_CHEST_POSITION), getObjectTypeId("RedMushroomBlock"), context));
+    await movePlayer(BED_POSITION, context, {
+        toleranceType: ToleranceType.Horizontal,
+        tolerance: 5,
+        avoidBlocks: ["Lava", "Water"],
+    });
+    await playerSleep(BED_POSITION, context);
     // await pickUpAll([111, 78, -2989], context);
-
-    // await mineUntilDestroyed([850, 80, -2694], context);
-    // await playerSleep(BED_POSITION, context);
 }
 
 async function main() {
