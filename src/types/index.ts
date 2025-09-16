@@ -52,3 +52,7 @@ export type WorldRegion = {
     topLeftCoord: Vec3;
     bottomRightCoord: Vec3;
 }
+
+export type WriteContractOptions = {
+    waitForTransaction?: boolean;
+}

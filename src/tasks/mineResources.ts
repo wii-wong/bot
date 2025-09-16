@@ -189,13 +189,14 @@ type MineResourcesParams = {
     searchItem: ObjectName;
     maxResourceCount?: number;
     ignoreTimeLimit?: boolean;
+    waitingForTxn?: boolean;
 }
 
 export async function mineResources(
     params: MineResourcesParams,
     context: BotContext
 ): Promise<void> {
-    const { toolsAvailble, searchRegion, searchRadius, searchItem, maxResourceCount, ignoreTimeLimit = false } = params;
+    const { toolsAvailble, searchRegion, searchRadius, searchItem, maxResourceCount, ignoreTimeLimit = false, waitingForTxn = true } = params;
     // Track how many resources have been collected
     let resourcesCollected = 0;
     let currentArea = await getNextArea(searchRegion, searchRadius);
@@ -218,16 +219,40 @@ export async function mineResources(
                 return;
             }
 
+            // Do not mine the block below the player
+            const playerPosition = await context.player.getPos();
+            const isBlockBelowPlayer =
+                Math.abs(point[0] - playerPosition[0]) < 0.5 &&
+                Math.abs(point[2] - playerPosition[2]) < 0.5 &&
+                point[1] === playerPosition[1] - 1;
+
+            if (isBlockBelowPlayer) {
+                console.log("Skipping block directly below player to prevent falling");
+                continue;
+            }
+
+            // Check the distance to the resource
+            // Move player near the building position if needed
+            const playerPost = await context.player.getPos();
+            const distanceToPos = Math.sqrt(
+                Math.pow(playerPost[0] - point[0], 2) +
+                Math.pow(playerPost[1] - point[1], 2) +
+                Math.pow(playerPost[2] - point[2], 2)
+            );
+
             // Move to the resource
-            const success = await movePlayer(point, context, {
-                toleranceType: ToleranceType.Cube,
-                tolerance: 5,
-                avoidBlocks: ["Lava", "Water"],
-                maxLoop: 10000,
-            });
+            let moveSuccess = true;
+            if (distanceToPos > 5) {
+                moveSuccess = await movePlayer(point, context, {
+                    toleranceType: ToleranceType.Cube,
+                    tolerance: 5,
+                    avoidBlocks: ["Lava", "Water"],
+                    maxLoop: 10000,
+                });
+            }
 
             // If movement failed, skip this resource
-            if (!success) {
+            if (!moveSuccess) {
                 console.log("Failed to move to resource, skipping");
                 continue;
             }
@@ -249,7 +274,7 @@ export async function mineResources(
             // Use the first available tool
             const toolSlot = toolSlots[0]?.slot;
             if (toolSlot !== undefined) {
-                await mineUntilDestroyedWithTool(point, toolSlot, context);
+                await mineUntilDestroyedWithTool(point, toolSlot, context, { waitForTransaction: waitingForTxn });
 
                 // Increment the counter for collected resources
                 resourcesCollected++;

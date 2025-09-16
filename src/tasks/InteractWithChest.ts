@@ -26,7 +26,7 @@ export async function InteractWithChest(param: InteractWithChestParam, context: 
   // Find slots with the specified object in the source
   const sourceSlots = getSlotsWithObject(sourceId, objectType, context);
 
-  console.log(`Source slots:`, sourceSlots);
+  // console.log(`Source slots:`, sourceSlots);
 
   if (sourceSlots.length === 0) {
     console.log(`No ${param.objectName} found in ${action === 'withdraw' ? 'chest' : 'inventory'}`);
@@ -49,7 +49,7 @@ export async function InteractWithChest(param: InteractWithChestParam, context: 
 
   // Get all slots in the target to find empty slots and slots with the same object
   const targetSlots = getAllSlots(targetId, context);
-  console.log(`Target slots:`, targetSlots);
+  // console.log(`Target slots:`, targetSlots);
 
   // Find empty slots in the target
   const occupiedSlotNumbers = new Set(targetSlots.map(slot => slot.slot));
@@ -60,7 +60,7 @@ export async function InteractWithChest(param: InteractWithChestParam, context: 
     slot => slot.objectType === objectType && slot.amount < maxPerSlot
   );
 
-  console.log(`Target slots with same object:`, targetSlotsWithSameObject);
+  // console.log(`Target slots with same object:`, targetSlotsWithSameObject);
 
   // Determine which max slots to use based on the target
   const maxSlots = targetId === chestId ? maxChestInventorySlots : maxPlayerInventorySlots;

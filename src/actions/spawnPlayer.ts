@@ -57,7 +57,7 @@ export async function spawnFromTile(spawnTile: Vec3, context: BotContext) {
   const txHash = await worldContract.write.spawn([
     encodeBlock(spawnTile),
     packVec3([spawnTile[0], spawnTile[1] + 1, spawnTile[2]]),
-    MAX_PLAYER_ENERGY / 4n,
+    MAX_PLAYER_ENERGY * 3n / 10n,
     "0x00"
   ]);
 

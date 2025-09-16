@@ -8,13 +8,13 @@ import { BotContext, WorldRegion } from "../types";
 
 
 /// CONSTANTS
-const searchRadius = 20;
+const searchRadius = 10;
 const searchRegion: WorldRegion = {
   topLeftCoord: [250, 80, -3000],
   bottomRightCoord: [800, 28, -2500],
 }
 const searchItem: ObjectName = "JungleLog";
-const toolsAvailble = ["CopperAxe", "WoodenPick", "WoodenAxe"] as ObjectName[];
+const toolsAvailble = ["IronPick", "WoodenPick", "WoodenAxe"] as ObjectName[];
 
 
 export async function energizeBot(context: BotContext) {
@@ -22,7 +22,7 @@ export async function energizeBot(context: BotContext) {
   await takeTools({ toolsAvailble, maxTotalTools: 10 }, context);
 
   // Step 2: Main mining loop
-  await mineResources({ toolsAvailble, searchRegion, searchRadius, searchItem }, context);
+  await mineResources({ toolsAvailble, searchRegion, searchRadius, searchItem, waitingForTxn: true, ignoreTimeLimit: true }, context);
 
   // Step 3: Make battery and energize force field
   await makeBattery(searchItem, context);

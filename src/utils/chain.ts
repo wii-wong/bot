@@ -2,7 +2,10 @@ import IWorldAbi from "@dust/world/out/IWorld.sol/IWorld.abi";
 import worldsJson from "@dust/world/worlds.json";
 import { createBurnerAccount } from "@latticexyz/common";
 import { transactionQueue } from "@latticexyz/common/actions";
-import { redstone } from "@latticexyz/common/chains";
+import {
+  redstone as redstoneChain,
+  type MUDChain,
+} from "@latticexyz/common/chains";
 import dotenv from "dotenv";
 import {
   ClientConfig,
@@ -17,6 +20,19 @@ import {
 } from "viem";
 
 dotenv.config();
+
+export const redstone = {
+  ...redstoneChain,
+  // rpcUrls: {
+  //   ...redstoneChain.rpcUrls,
+  //   wiresaw: {
+  //     http: ["https://wiresaw.redstonechain.com"],
+  //     webSocket: ["wss://wiresaw.redstonechain.com"],
+  //   },
+  // },
+  // indexerUrl: "https://indexer.alpha.dustproject.org",
+} satisfies MUDChain;
+
 
 export const chain = redstone;
 

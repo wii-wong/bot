@@ -22,6 +22,7 @@ export const FORCE_FIELD_POSITION: Vec3 = [226, 71, -2680];
 export const LAVA_POSITION: Vec3 = [265, 76, -2666];
 export const TOOL_CHEST_POSITION: Vec3 = [227, 71, -2682];
 export const RESOURCE_CHEST_POSITION: Vec3 = [228, 71, -2682];
+export const VWA_CHEST_POSITION: Vec3 = [229, 71, -2683];
 
 export const enum WorldBoundary {
     Y_MIN = -64,

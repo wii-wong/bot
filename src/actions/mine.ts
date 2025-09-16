@@ -1,5 +1,5 @@
 import { packVec3, Vec3, voxelToChunkPos } from "@dust/world/internal";
-import { BotContext } from "../types";
+import { BotContext, WriteContractOptions } from "../types";
 import { worldContract } from "../utils/chain";
 import { getEnergyPercent } from "../utils/common";
 import { CHUNK_COMMITMENT_DELAY_TIME } from "../utils/constants";
@@ -23,8 +23,11 @@ export async function mineUntilDestroyed(
 export async function mineUntilDestroyedWithTool(
   position: Vec3,
   slot: number,
-  context: BotContext
+  context: BotContext,
+  options?: WriteContractOptions
 ) {
+  const waitForTransaction = options?.waitForTransaction ?? true;
+
   console.log(
     `Mining ${position}, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}, object is ${getObjectName(await getObjectTypeAt(position))}`
   );
@@ -35,7 +38,9 @@ export async function mineUntilDestroyedWithTool(
       slot,
       "0x0"
     ]);
-    await context.stashResult.waitForTransaction(txHash);
+    if (waitForTransaction) {
+      await context.stashResult.waitForTransaction(txHash);
+    }
   } catch (error) {
     console.log("Mine failed!");
 

@@ -9,14 +9,14 @@ import { RESOURCE_CHEST_POSITION } from "../utils/constants";
 
 
 /// CONSTANTS
-const searchRadius = 5;
+const searchRadius = 6;
 const searchRegion: WorldRegion = {
   topLeftCoord: [77, 66, -3010],
   bottomRightCoord: [100, 69, -2966],
 }
 const searchItem: ObjectName = "Sand";
-const toolsAvailble = ["CopperAxe"] as ObjectName[];
-const maxTotalTools = 2;
+const toolsAvailble = ["CopperAxe", "WoodenPick", "WoodenAxe", "IronPick"] as ObjectName[];
+const maxTotalTools = 10;
 
 
 export async function collectingBot(context: BotContext) {
@@ -24,7 +24,7 @@ export async function collectingBot(context: BotContext) {
   await takeTools({ toolsAvailble, maxTotalTools }, context);
 
   // Step 2: Main mining loop
-  await mineResources({ searchRegion, searchRadius, searchItem, toolsAvailble, maxResourceCount: 880 - 640, ignoreTimeLimit: true }, context);
+  await mineResources({ searchRegion, searchRadius, searchItem, toolsAvailble, ignoreTimeLimit: true, waitingForTxn: false }, context);
 
   // Step 3: place resources into chest
   await movePlayer(RESOURCE_CHEST_POSITION, context, {
