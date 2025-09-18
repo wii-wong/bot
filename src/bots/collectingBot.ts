@@ -8,23 +8,33 @@ import { BotContext, ToleranceType, WorldRegion } from "../types";
 import { RESOURCE_CHEST_POSITION } from "../utils/constants";
 
 
-/// CONSTANTS
-const searchRadius = 6;
-const searchRegion: WorldRegion = {
-  topLeftCoord: [77, 66, -3010],
-  bottomRightCoord: [100, 69, -2966],
-}
-const searchItem: ObjectName = "Sand";
-const toolsAvailble = ["CopperAxe", "WoodenPick", "WoodenAxe", "IronPick"] as ObjectName[];
-const maxTotalTools = 10;
+/// SAND
+// const searchRegion: WorldRegion = {
+//   topLeftCoord: [77, 66, -3010],
+//   bottomRightCoord: [100, 69, -2966],
+// }
+// const searchItem: ObjectName = "Sand";
+// const toolsAvailble = ["CopperAxe", "WoodenPick", "WoodenAxe", "IronPick"] as ObjectName[];
+// const maxTotalTools = 10;
+// const waitForTxn = false;
 
+/// LOGS
+const searchRadius = 10;
+const searchRegion: WorldRegion = {
+  topLeftCoord: [250, 80, -3000],
+  bottomRightCoord: [800, 28, -2500],
+}
+const searchItem: ObjectName = "JungleLog";
+const toolsAvailble = ["IronPick", "CopperPick"] as ObjectName[];
+const maxTotalTools = 10;
+const waitForTxn = true;
 
 export async function collectingBot(context: BotContext) {
   // Step 1: Get tools from chest
   await takeTools({ toolsAvailble, maxTotalTools }, context);
 
   // Step 2: Main mining loop
-  await mineResources({ searchRegion, searchRadius, searchItem, toolsAvailble, ignoreTimeLimit: true, waitingForTxn: false }, context);
+  await mineResources({ searchRegion, searchRadius, searchItem, toolsAvailble, ignoreTimeLimit: true, waitingForTxn: waitForTxn }, context);
 
   // Step 3: place resources into chest
   await movePlayer(RESOURCE_CHEST_POSITION, context, {
