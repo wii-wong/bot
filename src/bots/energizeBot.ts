@@ -14,7 +14,7 @@ const searchRegion: WorldRegion = {
   bottomRightCoord: [800, 28, -2500],
 }
 const searchItem: ObjectName = "JungleLog";
-const toolsAvailble = ["IronPick", "WoodenPick", "WoodenAxe"] as ObjectName[];
+const toolsAvailble = ["DiamondPick"] as ObjectName[];
 
 
 export async function energizeBot(context: BotContext) {

@@ -1,13 +1,21 @@
-import { objectsByName } from "@dust/world/internal";
 import { fillBucket } from "../actions/fillBucket";
+import { getObjectTypeId } from "../actions/getObjectTypeAt";
 import { getSlotsWithObject } from "../actions/getSlotsWithObject";
-import { BotContext } from "../types";
+import { BotContext, ToleranceType } from "../types";
 import { waterCoord } from "../utils/constants";
+import { movePlayer } from "./movePlayer";
 
-export async function fillBuckets({ player, stashResult }: BotContext) {
+export async function fillBuckets(context: BotContext) {
+  await movePlayer(waterCoord, context, {
+    toleranceType: ToleranceType.Cube,
+    tolerance: 5,
+    avoidBlocks: ["Lava", "Water"],
+  });
+
   const emptyBuckets = getSlotsWithObject(
-    player.entityId,
-    objectsByName.Bucket.id
+    context.player.entityId,
+    getObjectTypeId('Bucket'),
+    context
   );
   if (emptyBuckets.length === 0) {
     console.warn("No empty buckets found in inventory.");
@@ -15,11 +23,8 @@ export async function fillBuckets({ player, stashResult }: BotContext) {
   }
 
   console.log(`Filling ${emptyBuckets.length} buckets...`);
-  const promises = [];
   for (const { slot } of emptyBuckets) {
-    const promise = fillBucket(player.entityId, waterCoord, slot, stashResult);
-    promises.push(promise);
+    await fillBucket(waterCoord, slot, context);
   }
-  await Promise.all(promises);
   console.log("All buckets filled!");
 }

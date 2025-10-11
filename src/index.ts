@@ -8,12 +8,13 @@ import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
     // await wakeup(BED_POSITION, context);
-    // await energizeBot(context);
     // await cuisine(context);
     // await spawnFromTile(SPAWN_TILE, context);
     // await energizeBot(context);
+    // await farmingBot(context);
+    // await harvestBot(context);
     // await collectingBot(context);
-    // await updateProgram(SPAWN_TILE, "0x73796269746c79000000000000000000537061776e54696c6550726f6772616d", context);
+    // await updateProgram(coord as Vec3, "0x73796269746c79000000000000000000436865737450726f6772616d00000000", context);
     // console.log(await getSlotsWithObject(encodeBlock(RESOURCE_CHEST_POSITION), getObjectTypeId("RedMushroomBlock"), context));
     // await movePlayer(BED_POSITION, context, {
     //     toleranceType: ToleranceType.Cube,

@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dust/world": "https://pkg.pr.new/dustproject/dust/@dust/world@3374e63",
+    "@dust/world": "https://pkg.pr.new/dustproject/dust/@dust/world@8b4d109",
     "@latticexyz/common": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
     "@latticexyz/stash": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",
     "@latticexyz/store": "2.2.23-b84bcc6141e8fecb564eaecfc6e60c764d91bf39",

@@ -7,17 +7,10 @@ import { getObjectName, getObjectTypeAt } from "./getObjectTypeAt";
 
 export async function mineUntilDestroyed(
   position: Vec3,
-  context: BotContext
+  context: BotContext,
+  options?: WriteContractOptions
 ) {
-  console.log(
-    `Mining ${position}, energy: ${getEnergyPercent(await context.player.getEnergy()).toString()}, object is ${getObjectName(await getObjectTypeAt(position))}`
-  );
-  const txHash = await worldContract.write.mineUntilDestroyed([
-    context.player.entityId,
-    packVec3(position),
-    "0x0"
-  ]);
-  await context.stashResult.waitForTransaction(txHash);
+  await mineUntilDestroyedWithTool(position, 10000, context, options);
 }
 
 export async function mineUntilDestroyedWithTool(
@@ -45,16 +38,32 @@ export async function mineUntilDestroyedWithTool(
     console.log("Mine failed!");
 
     // Check if error is "Chunk commitment expired"
-    if (error instanceof Error && error.message.includes("Chunk commitment expired")) {
+    if (error instanceof Error && (error.message.includes("Chunk commitment expired") || error.message.includes("No chunk commitment"))) {
       console.log("Chunk commitment expired, recommitting chunk and retrying...");
       // Call chunkCommit and then retry
-      const commitTxHash = await worldContract.write.chunkCommit([
-        context.player.entityId,
+      try {
+        const commitTxHash = await worldContract.write.initChunkCommit([
+          context.player.entityId,
+          packVec3(voxelToChunkPos(position)),
+        ]);
+        await context.stashResult.waitForTransaction(commitTxHash);
+      } catch (e) { }
+
+      // Wait for chunk commit to be processed (sleep for 1 block of chain)
+      await new Promise((resolve) => setTimeout(resolve, CHUNK_COMMITMENT_DELAY_TIME));
+
+      const drand = await fetch("https://api.drand.sh/v2/beacons/evmnet/rounds/latest");
+      const drandJson = await drand.json();
+
+      const commitTxHash = await worldContract.write.fulfillChunkCommit([
         packVec3(voxelToChunkPos(position)),
+        {
+          signature: [BigInt(`0x${(drandJson.signature as string).substring(0, 64)}`), BigInt(`0x${(drandJson.signature as string).substring(64)}`)],
+          roundNumber: BigInt(drandJson.round as number),
+        }
       ]);
       await context.stashResult.waitForTransaction(commitTxHash);
 
-      // Wait for chunk commit to be processed (sleep for 1 block of chain)
       await new Promise((resolve) => setTimeout(resolve, CHUNK_COMMITMENT_DELAY_TIME));
 
       // Retry mining

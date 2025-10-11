@@ -1,37 +1,49 @@
-import console from "console";
-import { getPlayerInfo } from "../actions/getPlayerInfo";
+import { bringItems } from "../tasks/bringItems";
 import { fillBuckets } from "../tasks/fillBuckets";
-import { harvestSeeds } from "../tasks/harvest";
 import { plantSeeds } from "../tasks/plantSeeds";
+import { returnItems } from "../tasks/returnItems";
 import { wetFarmlands } from "../tasks/wetFarmlands";
 import { BotContext } from "../types";
-import { walletClient } from "../utils/chain";
-
-
-async function singleRun(context: BotContext) {
-  console.log("🤖 Bot started...");
-  const playerInfo = await getPlayerInfo(walletClient.account.address);
-  console.log(
-    `Player ${playerInfo.entityId} is at position ${await playerInfo.getPos()} with energy ${playerInfo.getEnergy()}`
-  );
-
-  await fillBuckets(context);
-  await wetFarmlands(context);
-  await plantSeeds(context);
-  await harvestSeeds(context);
-}
+import { BUCKET_CHEST_POSITION, SEEDS_CHEST_POSITION } from "../utils/constants";
 
 export async function farmingBot(context: BotContext) {
+  await bringItems({
+    maxTotalItem: 40,
+    itemName: 'Bucket',
+    chestCoord: BUCKET_CHEST_POSITION
+  }, context);
 
-  while (true) {
-    try {
-      await singleRun(context);
-      console.log("Bot run completed. Restarting...");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error("Error in bot loop:", error);
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-    }
-  }
+  await bringItems({
+    maxTotalItem: 40,
+    itemName: 'WaterBucket',
+    chestCoord: BUCKET_CHEST_POSITION
+  }, context);
+
+  await bringItems({
+    maxTotalItem: 40,
+    itemName: 'WheatSeed',
+    chestCoord: SEEDS_CHEST_POSITION
+  }, context);
+
+  await fillBuckets(context);
+
+  await wetFarmlands(context);
+
+  await plantSeeds(context);
+
+  await returnItems({
+    chestCoord: BUCKET_CHEST_POSITION,
+    itemName: 'Bucket',
+  }, context);
+
+  await returnItems({
+    chestCoord: BUCKET_CHEST_POSITION,
+    itemName: 'WaterBucket',
+  }, context);
+
+  await returnItems({
+    chestCoord: SEEDS_CHEST_POSITION,
+    itemName: 'WheatSeed',
+  }, context);
 }
 

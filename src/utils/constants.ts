@@ -3,10 +3,9 @@ import { Vec3 } from "@dust/world/internal";
 export const maxPlayerInventorySlots = 36;
 export const maxChestInventorySlots = 27;
 
-export const waterCoord: Vec3 = [888, 62, -1361];
+export const waterCoord: Vec3 = [155, 62, -2611];
 
-export const lowerFarmCoord: Vec3 = [883, 62, -1367];
-export const upperFarmCoord: Vec3 = [892, 63, -1362];
+export const FARMLAND_CENTER_POSITION: Vec3 = [207, 77, -2618];
 
 export const MAX_PLAYER_ENERGY = 817600000000000000n;
 
@@ -20,6 +19,8 @@ export const SPAWN_TILE: Vec3 = [223, 71, -2681];
 export const POWER_STONE_POSITION: Vec3 = [224, 71, -2677];
 export const FORCE_FIELD_POSITION: Vec3 = [226, 71, -2680];
 export const LAVA_POSITION: Vec3 = [265, 76, -2666];
+export const SEEDS_CHEST_POSITION: Vec3 = [223, 71, -2682];
+export const BUCKET_CHEST_POSITION: Vec3 = [224, 71, -2682];
 export const TOOL_CHEST_POSITION: Vec3 = [227, 71, -2682];
 export const RESOURCE_CHEST_POSITION: Vec3 = [228, 71, -2682];
 export const VWA_CHEST_POSITION: Vec3 = [229, 71, -2683];

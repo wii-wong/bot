@@ -9,7 +9,7 @@ export const tables = {
   InventorySlot: mudConfig.tables.InventorySlot,
   Energy: mudConfig.tables.Energy,
   // Mass: mudConfig.tables.Mass,
-  // SeedGrowth: mudConfig.tables.SeedGrowth,
+  SeedGrowth: mudConfig.tables.SeedGrowth,
 };
 
 export const stash = createStash({ namespaces: { "": { tables } } });
