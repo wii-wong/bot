@@ -16,12 +16,7 @@ async function runBot(context: BotContext) {
     // await collectingBot(context);
     // await updateProgram(coord as Vec3, "0x73796269746c79000000000000000000436865737450726f6772616d00000000", context);
     // console.log(await getSlotsWithObject(encodeBlock(RESOURCE_CHEST_POSITION), getObjectTypeId("RedMushroomBlock"), context));
-    // await movePlayer(BED_POSITION, context, {
-    //     toleranceType: ToleranceType.Cube,
-    //     tolerance: 5,
-    //     avoidBlocks: ["Lava", "Water"],
-    // });
-    // await playerSleep(BED_POSITION, context);
+    // await sleepBot(context);
     // await pickUpAll([111, 78, -2989], context);
 }
 

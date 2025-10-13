@@ -9,26 +9,26 @@ import { RESOURCE_CHEST_POSITION } from "../utils/constants";
 
 
 /// SAND
-const searchRadius = 10;
-const searchRegion: WorldRegion = {
-  topLeftCoord: [75, 64, -3016],
-  bottomRightCoord: [117, 69, -2951],
-}
-const searchItem: ObjectName = "Sand";
-const toolsAvailble = ["DiamondPick"] as ObjectName[];
-const maxTotalTools = 10;
-const waitForTxn = false;
-
-/// LOGS
 // const searchRadius = 10;
 // const searchRegion: WorldRegion = {
-//   topLeftCoord: [250, 80, -3000],
-//   bottomRightCoord: [800, 28, -2500],
+//   topLeftCoord: [75, 64, -3016],
+//   bottomRightCoord: [117, 69, -2951],
 // }
-// const searchItem: ObjectName = "JungleLog";
-// const toolsAvailble = ["IronPick", "CopperPick"] as ObjectName[];
+// const searchItem: ObjectName = "Sand";
+// const toolsAvailble = ["DiamondPick"] as ObjectName[];
 // const maxTotalTools = 10;
-// const waitForTxn = true;
+// const waitForTxn = false;
+
+/// LOGS
+const searchRadius = 10;
+const searchRegion: WorldRegion = {
+  topLeftCoord: [250, 80, -3000],
+  bottomRightCoord: [800, 28, -2500],
+}
+const searchItem: ObjectName = "JungleLog";
+const toolsAvailble = ["DiamondPick"] as ObjectName[];
+const maxTotalTools = 10;
+const waitForTxn = true;
 
 /// GRASS
 // const searchRadius = 8;
