@@ -1,6 +1,7 @@
 
 import process from "process";
 import { getPlayerInfo } from "./actions/getPlayerInfo";
+import { fillEventChestBot } from "./bots/fillEventChestBot";
 import { BotContext } from "./types";
 import { walletClient } from "./utils/chain";
 import { getEnergyPercent } from "./utils/common";
@@ -14,6 +15,7 @@ async function runBot(context: BotContext) {
     // await farmingBot(context);
     // await harvestBot(context);
     // await collectingBot(context);
+    await fillEventChestBot(context);
     // await updateProgram(coord as Vec3, "0x73796269746c79000000000000000000436865737450726f6772616d00000000", context);
     // console.log(await getSlotsWithObject(encodeBlock(RESOURCE_CHEST_POSITION), getObjectTypeId("RedMushroomBlock"), context));
     // await sleepBot(context);

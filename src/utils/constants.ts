@@ -42,3 +42,14 @@ export const MOVE_ENERGY_COST = 25550000000000n;
 
 export const DEFAULT_MINE_ENERGY_COST = 8100000000000000n;
 export const TOOL_MINE_ENERGY_COST = 255500000000000n;
+
+export const EVENT_CHESTS: Vec3[] = [
+    [383, 70, -2462],
+    [385, 70, -2462],
+    [383, 70, -2464],
+    [385, 70, -2464],
+    [383, 70, -2466],
+    [385, 70, -2466],
+    [383, 70, -2468],
+    [385, 70, -2468],
+]
