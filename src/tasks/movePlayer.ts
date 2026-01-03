@@ -3,7 +3,6 @@ import { Vec3 } from "@dust/world/internal";
 import { move } from "../actions/move";
 import { BotContext, MovePlayerOptions } from "../types";
 import { getEnergyPercent } from "../utils/common";
-import { MOVE_PLAYER_DELAY } from "../utils/constants";
 import { calculateMoveCostEnergy } from "./moveCostEnergy";
 import { pathFinding } from "./pathfinding";
 
@@ -33,11 +32,10 @@ export async function movePlayer(target: Vec3, context: BotContext, options: Mov
     // 分开调用，每28个点调用一次，每次调用完等待1s
     try {
         for (let i = 0; i < path.length; i += 28) {
-            await move(
-                path.slice(i, i + 28),
-                context
-            );
-            await new Promise(resolve => setTimeout(resolve, MOVE_PLAYER_DELAY));
+            const pathSegment = path.slice(i, i + 28);
+
+            // The move function now handles retries internally
+            await move(pathSegment, context);
         }
         return true;
     } catch (error) {

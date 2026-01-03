@@ -11,10 +11,10 @@ import { BotContext, WorldRegion } from "../types";
 const searchRadius = 10;
 const searchRegion: WorldRegion = {
   topLeftCoord: [250, 80, -3000],
-  bottomRightCoord: [800, 28, -2500],
+  bottomRightCoord: /*[800, 28, -2500]*/[500, 80, -2700],
 }
 const searchItem: ObjectName = "JungleLog";
-const toolsAvailble = ["DiamondPick"] as ObjectName[];
+const toolsAvailble = ["IronPick"] as ObjectName[];
 
 
 export async function energizeBot(context: BotContext) {

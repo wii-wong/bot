@@ -1,8 +1,9 @@
 import { packVec3, Vec3, voxelToChunkPos } from "@dust/world/internal";
+import { isMineable } from "../tasks/blockCategory";
 import { BotContext, WriteContractOptions } from "../types";
 import { worldContract } from "../utils/chain";
 import { getEnergyPercent } from "../utils/common";
-import { CHUNK_COMMITMENT_DELAY_TIME } from "../utils/constants";
+import { CHUNK_COMMITMENT_DELAY_TIME, PLAYER_ACTION_DELAY } from "../utils/constants";
 import { getObjectName, getObjectTypeAt } from "./getObjectTypeAt";
 
 export async function mineUntilDestroyed(
@@ -33,6 +34,13 @@ export async function mineUntilDestroyedWithTool(
     ]);
     if (waitForTransaction) {
       await context.stashResult.waitForTransaction(txHash);
+
+      await new Promise(resolve => setTimeout(resolve, PLAYER_ACTION_DELAY));
+
+      if (await isMineable(position)) {
+        console.log("Mine did not succeed, retrying...");
+        return mineUntilDestroyedWithTool(position, slot, context, options);
+      }
     }
   } catch (error) {
     console.log("Mine failed!");
