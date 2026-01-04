@@ -1,6 +1,7 @@
 import { encodeBlock, Vec3 } from "@dust/world/internal";
 import { BotContext, SlotAmount } from "../types";
 import { worldContract } from "../utils/chain";
+import { PLAYER_ACTION_DELAY } from "../utils/constants";
 
 export async function energizeFF(
   forcefield: Vec3,
@@ -16,4 +17,5 @@ export async function energizeFF(
   ]);
   console.log(`Energizing forcefield in slot ${slots}, txHash: ${txHash}`);
   await context.stashResult.waitForTransaction(txHash);
+  await new Promise(resolve => setTimeout(resolve, PLAYER_ACTION_DELAY));
 }

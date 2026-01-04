@@ -2,6 +2,7 @@ import { encodeBlock, Recipe, Vec3 } from "@dust/world/internal";
 import { BotContext, SlotAmount } from "../types";
 import { worldContract } from "../utils/chain";
 import { encodeRecipe } from "../utils/common";
+import { PLAYER_ACTION_DELAY } from "../utils/constants";
 
 export async function craft(
   station: Vec3,
@@ -17,4 +18,5 @@ export async function craft(
   ]);
   console.log(`Crafting, txHash: ${txHash}`);
   await context.stashResult.waitForTransaction(txHash);
+  await new Promise(resolve => setTimeout(resolve, PLAYER_ACTION_DELAY));
 }
