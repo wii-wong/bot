@@ -1,10 +1,8 @@
 import IWorldAbi from "@dust/world/out/IWorld.sol/IWorld.abi";
-import worldsJson from "@dust/world/worlds.json";
 import { createBurnerAccount } from "@latticexyz/common";
 import { transactionQueue } from "@latticexyz/common/actions";
 import {
-  redstone as redstoneChain,
-  type MUDChain,
+  type MUDChain
 } from "@latticexyz/common/chains";
 import dotenv from "dotenv";
 import {
@@ -21,20 +19,28 @@ import {
 
 dotenv.config();
 
-export const redstone = {
-  ...redstoneChain,
+export const dustchain = {
+  id: 55378,
+  name: "DUST Mainnet",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Ether",
+    symbol: "ETH",
+  },
   rpcUrls: {
-    ...redstoneChain.rpcUrls,
+    default: {
+      http: ["https://rpc.dustproject.org"],
+      webSocket: ["wss://rpc.dustproject.org"],
+    },
     wiresaw: {
-      http: ["https://wiresaw.redstonechain.com"],
-      webSocket: ["wss://wiresaw.redstonechain.com"],
+      http: ["https://rpc.dustproject.org"],
+      webSocket: ["wss://rpc.dustproject.org"],
     },
   },
-  // indexerUrl: "https://indexer.alpha.dustproject.org",
 } satisfies MUDChain;
 
 
-export const chain = redstone;
+export const chain = dustchain;
 
 const clientOptions = {
   chain: chain,
@@ -42,8 +48,8 @@ const clientOptions = {
   pollingInterval: 2_000,
 } as const satisfies ClientConfig;
 
-export const worldAddress = worldsJson[chain.id]?.address as Hex;
-export const worldBlockNumber = worldsJson[chain.id]?.blockNumber ?? 0;
+export const worldAddress = "0x253eb85B3C953bFE3827CC14a151262482E7189C"; // worldsJson[chain.id]?.address as Hex;
+export const worldBlockNumber = 1200000; // worldsJson[chain.id]?.blockNumber ?? 0;
 
 export const publicClient = createPublicClient(clientOptions) as PublicClient;
 

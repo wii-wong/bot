@@ -7,6 +7,7 @@ import { getEnergyPercent } from "./utils/common";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
+    // await randomSpawn(context);
     // await wakeup(BED_POSITION, context);
     // await cuisine(context);
     // await spawnFromTile(SPAWN_TILE, context);

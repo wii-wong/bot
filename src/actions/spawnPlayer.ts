@@ -1,6 +1,6 @@
 import { encodeBlock, packVec3, Vec3 } from "@dust/world/internal";
 import { BotContext } from "../types";
-import { publicClient, worldContract } from "../utils/chain";
+import { worldContract } from "../utils/chain";
 import { MAX_PLAYER_ENERGY } from "../utils/constants";
 
 export async function randomSpawn(
@@ -17,8 +17,13 @@ export async function randomSpawn(
 
   while (attempts < maxAttempts) {
     try {
+      const drand = await fetch("https://api.drand.sh/v2/beacons/evmnet/rounds/latest");
+      const drandJson = await drand.json();
       txHash = await worldContract.write.randomSpawn([
-        (await publicClient.getBlockNumber()) - 2n,
+        {
+          signature: [BigInt(`0x${(drandJson.signature as string).substring(0, 64)}`), BigInt(`0x${(drandJson.signature as string).substring(64)}`)],
+          roundNumber: BigInt(drandJson.round as number),
+        },
         packVec3(await context.player.getPos()),
       ]);
       console.log(

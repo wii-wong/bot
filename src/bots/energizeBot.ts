@@ -14,12 +14,12 @@ const searchRegion: WorldRegion = {
   bottomRightCoord: /*[800, 28, -2500]*/[500, 80, -2700],
 }
 const searchItem: ObjectName = "JungleLog";
-const toolsAvailble = ["IronPick"] as ObjectName[];
+const toolsAvailble = ["GoldPick"] as ObjectName[];
 
 
 export async function energizeBot(context: BotContext) {
   // Step 1: Get tools from chest
-  await takeTools({ toolsAvailble, maxTotalTools: 10 }, context);
+  await takeTools({ toolsAvailble, maxTotalTools: 1 }, context);
 
   // Step 2: Main mining loop
   await mineResources({ toolsAvailble, searchRegion, searchRadius, searchItem, waitingForTxn: true, ignoreTimeLimit: true }, context);
