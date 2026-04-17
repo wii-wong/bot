@@ -7,6 +7,8 @@ import { getEnergyPercent } from "./utils/common";
 import { syncStash } from "./utils/stash";
 
 async function runBot(context: BotContext) {
+    // await inventoryBot(context);
+    // await eatFoodBot(5, 3, context);
     // await randomSpawn(context);
     // await wakeup(BED_POSITION, context);
     // await cuisine(context);
@@ -17,7 +19,7 @@ async function runBot(context: BotContext) {
     // await collectingBot(context);
     // await collectSeedsBot(context);
     // await fillEventChestBot(context);
-    // await updateProgram(coord as Vec3, "0x73796269746c79000000000000000000436865737450726f6772616d00000000", context);
+    // await updateProgram(FORCE_FIELD_POSITION, "0x73796269746c79320000000000000000464650726f6772616d00000000000000", context);
     // console.log(await getSlotsWithObject(encodeBlock(RESOURCE_CHEST_POSITION), getObjectTypeId("RedMushroomBlock"), context));
     // await sleepBot(context);
     // await pickUpAll([111, 78, -2989], context);

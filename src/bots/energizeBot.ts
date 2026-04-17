@@ -19,7 +19,7 @@ const toolsAvailble = ["GoldPick"] as ObjectName[];
 
 export async function energizeBot(context: BotContext) {
   // Step 1: Get tools from chest
-  await takeTools({ toolsAvailble, maxTotalTools: 1 }, context);
+  await takeTools({ toolsAvailble, maxTotalTools: 2 }, context);
 
   // Step 2: Main mining loop
   await mineResources({ toolsAvailble, searchRegion, searchRadius, searchItem, waitingForTxn: true, ignoreTimeLimit: true }, context);
